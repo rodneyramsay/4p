@@ -1,5 +1,5 @@
 # 4p
-Create GPL altitude equation coefficients based on 4 point sets. 
+Create GPL altitude equation coefficients. Each equation is defned by 4 point sets. 
 
 Import altitude data one column for each trace.
 
