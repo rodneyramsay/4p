@@ -1,4 +1,4 @@
-# 4p
+# 4p (Work in Progress!)
 Create GPL track editing altitude trace equation coefficients. Each equation is defned by 4 point sets. 
 
 Import altitude data one column for each trace.
