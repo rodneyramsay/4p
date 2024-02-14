@@ -7,6 +7,6 @@ Input Format:
 
    Section Length, Track X, Trace 1 Altitude, Trace 2 Altitude, ...
 
-Crates stitched gnuplot formulas for eqch trace and section of the track for visualizing equarion curves. 
+Crates stitched gnuplot formulas for each trace and section of the track for visualizing equarion curves. 
 
 
