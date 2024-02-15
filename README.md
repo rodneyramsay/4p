@@ -18,7 +18,7 @@ f(0) = Y_0 = D
 f(L) = Y_L = AL^3 + BL^2 + CL  
 
 f'(0) = S_0 = C  
-f'(L) = S_L = 3AL**2 + 2BL**L + S_0  
+f'(L) = S_L = 3AL^2 + 2BL^2 + S_0  
 
 Subtract 2f(L) - Lf'(L) to get A
 
