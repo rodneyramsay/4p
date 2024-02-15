@@ -1,0 +1,124 @@
+#!/usr/bin/perl
+
+use Math::Trig;
+
+my $lon1, $lat1, $lon2, $lat2;
+my $name, $altitude, $coord, @coord;
+my $z1, $z2, $altitude1;
+
+my $altitude0 = 3344.0;
+
+#
+#
+#
+sub numeric_names {
+   if($a =~ m/([a-zA-Z_]+)([0-9]+)/) {
+      ($a_name, $a_num) = (uc($1), $2);
+   }
+
+   if($b =~ m/([a-zA-Z_]+)([0-9]+)/) {
+      ($b_name, $b_num) = (uc($1), $2);
+   }
+
+   if($a_name eq $b_name) {
+      return $a_num <=> $b_num;
+   }
+   else {
+      return $a_name cmp $a_name;
+   }
+}
+
+#
+#
+#
+while(<>) {
+
+   if(m/\<name\>([^\<]+)\<\/name\>/) {
+      $name = $1;
+   }
+
+   if(m/\<altitude\>([^\<]+)\<\/altitude\>/) {
+      $altitude1 = $1;
+   }
+
+   if(m/\<longitude\>([^\<]+)\<\/longitude\>/) {
+      $longitude = $1;
+   }
+
+   if(m/\<latitude\>([^\<]+)\<\/latitude\>/) {
+      $latitude = $1;
+   }
+
+   if(m/\<coordinates\>/) {
+      $coord = <>;
+      chomp($coord);
+      $coord =~ s/\s+//;
+
+      @coord = split(/[, ]/, $coord);
+      $coord = join(", ", @coord);
+
+#      push(@coord, $longitude);
+#      push(@coord, $latitude);
+#      push(@coord, 0);
+
+      if($#coord > 3) {
+
+	 $path_length = 0.0;
+
+	 while($#coord > 3) {
+	    $lon1 = shift(@coord);
+	    $lat1 = shift(@coord);
+	    $z1 = shift(@coord);
+
+	    $lon2 = shift(@coord);
+	    $lat2 = shift(@coord);
+	    $z2 = shift(@coord);
+
+	    if($lon1 && $lon2 && $lat1 && $lat2) {
+
+	       $theta = $lon1 - $lon2;
+
+ 	       $l = sin(deg2rad($lat1)) *
+		   sin(deg2rad($lat2)) +
+		   cos(deg2rad($lat1)) *
+		   cos(deg2rad($lat2)) *
+		   cos(deg2rad($theta));
+
+	       $l = acos($l);
+	       $l = rad2deg($l);
+	       $l = $l * 60 * 1.1515;
+
+	       $l = $l * 1000.0 / 0.62137;
+
+	       $path_length += $l;
+	    }
+
+	    unshift(@coord, $z2);
+	    unshift(@coord, $lat2);
+	    unshift(@coord, $lon2);
+
+	 }
+	 $h = $altitude1 - $altitude0;
+
+#	 $p = sqrt($path_length**2 + $h**2);
+#	 print("$p = sqrt($path_length**2 + $h**2\n");
+	 $path_length = sqrt($path_length**2 + $h**2);
+
+	 $altitude0 = $altitude1;
+
+	 push(@section_names, $name);
+	 $path_lengths{$name} = $path_length;
+      }
+   }
+}
+
+@sections_sorted = sort numeric_names @section_names;
+
+foreach $section_name (@sections_sorted) {
+   print "$section_name, $path_lengths{$section_name}\n";
+}
+
+
+
+
+   
