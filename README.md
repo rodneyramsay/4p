@@ -22,4 +22,4 @@ f'(L) = S_L = 3AL^2 + 2BL^2 + S_0
 
 Subtract 2f(L) - Lf'(L) to get A
 
-$A = (L(S_0 + S_L) + 2(Y_0 - Y_L)) / L*3))$  
+A = (L(S_0 + S_L) + 2(Y_0 - Y_L)) / L*3))  
