@@ -28,7 +28,7 @@ while($section <= $num_sections) {
     #
     $jj = $section - 1;
     if($jj < 0) {
-	$jj = $num_sections;
+	   $jj = $num_sections;
     }
 
     #
