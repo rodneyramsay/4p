@@ -1,5 +1,11 @@
 #!/usr/bin/perl
 
+use MATH::Trig;
+
+$TICS_PER_METER = 19685.0;
+$MAX_TRACES = 16;
+$MAX_SECTIONS = 4096;
+
 #
 # Parse data input ino comma separated strings.
 #
@@ -8,12 +14,13 @@ while(<>) {
     push(@strings, $_);
 }
 
+$num_sections = $#strings;
+
 #
 # Loop through all the sections.
 #
 $section = 0;
-$track_length = 0;
-while($section <= $#strings) {
+while($section <= $num_sections) {
 
     #
     # Start function on previous section.
@@ -21,7 +28,7 @@ while($section <= $#strings) {
     #
     $jj = $section - 1;
     if($jj < 0) {
-	$jj = $#strings;
+	$jj = $num_sections;
     }
 
     #
@@ -33,38 +40,34 @@ while($section <= $#strings) {
 	#
 	# Wrap around to start.
 	#
-	if($jj > $#strings) {
+	if($jj > $num_sections) {
  	    $jj = 0;
 	}
 
-	@t = split(/,/, $strings[$jj++]);
+	@t = split(/, /, $strings[$jj++]);
 
 
 	#
 	# Store length, x, and y
 	#
-	$M[$x]{l} = $t[0];
-	$M[$x]{x} = $t[1];
-	$M[$x]{y} = $t[2];
+	$M[$x]{l} = $t[1];
+	$M[$x]{x} = $t[2] - $M[$x]{l};
+	$M[$x]{y} = $t[3];
 
-	if($jj == $#strings) {
-	    $track_length = $M[$x]{x};
-	}
-
- 	print "r[$x] = $M[$x]{x}, $M[$x]{y}\n";
+ 	print "r[$x] = $M[$x]{x}, Y=$M[$x]{y} L=$M[$x]{l}\n";
     }
 
-    #
-    # Set x relative to 0 for start.
-    #
-    if($section == 0) {
-	$M[0]{x} = -1 * $M[0]{l};
-    }
+#     #
+#     # Set x relative to 0 for start.
+#     #
+#     if($section == 0) {
+# 	$M[0]{x} = -1 * $M[0]{l};
+#     }
 
     #
     # Create data file for gnuplot
     #
-    open(PARAMS, ">", "__params.txt") or
+    open(PARAMS, ">", "do_plot_all.txt") or
 	die "unable to generate data __params.txt\n";
     
 
@@ -74,7 +77,7 @@ while($section <= $#strings) {
     foreach $x (0..3) {
 	print "$M[$x]{x} $M[$x]{y}\n";
     }
-    print("\n\n");
+    print "\n\n";
 
     $slope_left  = ($M[1]{y} - $M[0]{y}) / ($M[1]{x} - $M[0]{x});
     $slope_mid   = ($M[2]{y} - $M[1]{y}) / ($M[2]{x} - $M[1]{x});
@@ -111,6 +114,10 @@ while($section <= $#strings) {
     $all_params[$section]{c} = $params{c};
     $all_params[$section]{d} = $params{d};
 
+    $all_geo[$section]{L} = $M[1]{l};
+    $all_geo[$section]{L_tics} = sprintf("%d", $TICS_PER_METER * $M[1]{l});
+    $all_geo[$section]{X} = $M[1]{x};
+
     print "f(x) = $params{a}*x**3 +  $params{b}*x**2 +  $params{c}*x +  $params{d}\n";
     print "f(0) = $params{d}\n";
 
@@ -130,25 +137,66 @@ while($section <= $#strings) {
     $section++
 }
  
-foreach $x (0..$#strings) {
-    print "f_$x(x) = $all_params[$x]{a}*x**3 + $all_params[$x]{b}*x**2 + $all_params[$x]{c}*x + $all_params[$x]{d}\n";
-}
 
-
-foreach $x (0..$#strings) {
-    @t = split(/,/, $strings[$jj++]);
-
-    foreach $y (@t) {
-	printf "%12g", $y;
-    }
-    print "\n";
-}
+$track_length = $all_geo[$num_sections]{X} + $all_geo[$num_sections]{L};
 
 
 
-      
 
 
-	  
-
+#
+# Create plot file for gnuplot
+#
+open(PLOT, ">", "__do_plot_all.txt") or
+    die "unable to generate data __do_plot_all.txt\n";
     
+foreach $x (0..$num_sections) {
+    print PLOT "f_$x(x) = $all_params[$x]{a}*x**3 + $all_params[$x]{b}*x**2 + $all_params[$x]{c}*x + $all_params[$x]{d}\n";
+}
+
+print PLOT "set xrange [0:$track_length]\n";
+print PLOT "plot sample \\\n";
+
+
+foreach $x (0..$num_sections) {
+   $x_0 = $all_geo[$x]{X};
+   $x_1 = ($all_geo[$x]{L} + $all_geo[$x]{X});
+   print PLOT "     [${x_0}:${x_1}] f_$x(x-${x_0})";
+
+   if($x < $num_sections) {
+      unless($x &&
+	     (($x % 20) == 0) ||
+	     ($num_sections - x < 20)) {
+	 print PLOT ", \\";
+      }
+   }
+   print PLOT "\n";
+
+   if($x && ($x % 20) == 0) {
+      print PLOT "pause -1";
+      print PLOT "\n";
+      print PLOT "\n";
+      print PLOT "plot sample \\\n";
+   }
+}
+print PLOT "pause -1";
+print PLOT "\n";
+print PLOT "\n";
+
+close(PLOT);
+
+open(GTK_TXT, ">", "__gtk_csv.TXT") or
+    die "Unable to open __gtk_csv.TXT\n";
+
+foreach $x (0..$num_sections) {
+#   print GTK_TXT "gradient_angle_0 = atan2($all_params[$x]{c}, $all_geo[$x]{L_tics})\n";
+   $gradient_angle_0 = atan2($all_params[$x]{c}, $all_geo[$x]{L_tics});
+   print GTK_TXT "$x, $all_geo[$x]{L_tics}, $all_params[$x]{d} , $all_params[$x]{a} , $all_params[$x]{b} , $all_params[$x]{c}, $gradient_angle_0";
+   print GTK_TXT ", $all_geo[$x]{L_tics}, $all_params[$x]{d} , $all_params[$x]{a} , $all_params[$x]{b} , $all_params[$x]{c}, $gradient_angle_0";
+   for($ii = 2; $ii < $MAX_TRACES; $ii++) {
+      print GTK_TXT ", 0, 0, 0, 0, 0, 0.0";
+   }
+   print GTK_TXT "\n";
+}
+
+close (GTK_TXT);

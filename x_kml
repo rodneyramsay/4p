@@ -6,39 +6,41 @@ my $lon1, $lat1, $lon2, $lat2;
 my $name, $altitude, $coord, @coord;
 my $z1, $z2, $altitude1;
 
-my $altitude0 = 3344.0;
+my $altitude0 = 0;
 
 #
 #
 #
 sub numeric_names {
    if($a =~ m/([a-zA-Z_]+)([0-9]+)/) {
-      ($a_name, $a_num) = (uc($1), $2);
+      ($a_name, $a_num) = ($1, $2);
    }
 
    if($b =~ m/([a-zA-Z_]+)([0-9]+)/) {
-      ($b_name, $b_num) = (uc($1), $2);
+      ($b_name, $b_num) = ($1, $2);
    }
 
-   if($a_name eq $b_name) {
-      return $a_num <=> $b_num;
+   if($a_num == $b_num) {
+      return $a_name cmp $a_name;
    }
    else {
-      return $a_name cmp $a_name;
+      return $a_num <=> $b_num;
    }
 }
 
 #
 #
 #
+$altitude = 0;
+$section_num = 0;
 while(<>) {
 
    if(m/\<name\>([^\<]+)\<\/name\>/) {
-      $name = $1;
+      $name = uc($1);
    }
 
-   if(m/\<altitude\>([^\<]+)\<\/altitude\>/) {
-      $altitude1 = $1;
+   if(m/\<altitude\>([0-9\.]+)\<\/altitude\>/) {
+      $altitude = $1;
    }
 
    if(m/\<longitude\>([^\<]+)\<\/longitude\>/) {
@@ -49,19 +51,25 @@ while(<>) {
       $latitude = $1;
    }
 
-   if(m/\<coordinates\>/) {
-      $coord = <>;
-      chomp($coord);
-      $coord =~ s/\s+//;
+   if(m/\<(Point|LineString)\>/) {
 
-      @coord = split(/[, ]/, $coord);
-      $coord = join(", ", @coord);
+      $obj_type = "$1";
 
-#      push(@coord, $longitude);
-#      push(@coord, $latitude);
-#      push(@coord, 0);
+      if($obj_type eq "Point") {
+	 $altitude0{$name} = $altitude;
+      }
+   }
 
-      if($#coord > 3) {
+   if($obj_type eq "LineString") {
+
+      if(m/\<coordinates\>/) {
+	 $coord = <>;
+	 chomp($coord);
+	 $coord =~ s/\s+//;
+
+	 @coord = split(/[, ]/, $coord);
+	 $coord = join(", ", @coord);
+
 
 	 $path_length = 0.0;
 
@@ -98,13 +106,12 @@ while(<>) {
 	    unshift(@coord, $lon2);
 
 	 }
-	 $h = $altitude1 - $altitude0;
+#	 $h = $altitude1 - $altitude0;
 
 #	 $p = sqrt($path_length**2 + $h**2);
 #	 print("$p = sqrt($path_length**2 + $h**2\n");
-	 $path_length = sqrt($path_length**2 + $h**2);
+#	 $path_length = sqrt($path_length**2 + $h**2);
 
-	 $altitude0 = $altitude1;
 
 	 push(@section_names, $name);
 	 $path_lengths{$name} = $path_length;
@@ -114,8 +121,18 @@ while(<>) {
 
 @sections_sorted = sort numeric_names @section_names;
 
+$altitude1{$sections_sorted[$#sections_sorted]} = $altitude0{$sections_sorted[0]};
+
+$total_length = 0.0;
+$jj = 0;
 foreach $section_name (@sections_sorted) {
-   print "$section_name, $path_lengths{$section_name}\n";
+   if($jj < $#sections_sorted) {
+      $altitude1{$section_name} = $altitude0{$sections_sorted[$jj + 1]};
+      $jj++;
+   }
+   
+   $total_length += $path_lengths{$section_name};
+   print "$section_name, $path_lengths{$section_name}, $total_length, $altitude0{$section_name}, $altitude1{$section_name}\n";
 }
 
 
