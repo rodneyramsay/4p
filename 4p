@@ -28,7 +28,7 @@ while($section <= $num_sections) {
     #
     $jj = $section - 1;
     if($jj < 0) {
-	   $jj = $num_sections;
+	$jj = $num_sections;
     }
 
     #
@@ -42,7 +42,7 @@ while($section <= $num_sections) {
 	#
 	if($jj > $num_sections) {
  	    $jj = 0;
-    }
+	}
 
 	@t = split(/, /, $strings[$jj++]);
 
@@ -56,14 +56,6 @@ while($section <= $num_sections) {
 
  	print "r[$x] = $M[$x]{x}, Y=$M[$x]{y} L=$M[$x]{l}\n";
     }
-
-#     #
-#     # Set x relative to 0 for start.
-#     #
-#     if($section == 0) {
-# 	$M[0]{x} = -1 * $M[0]{l};
-#     }
-    
 
     #
     # X locations relative to 0
@@ -119,7 +111,7 @@ while($section <= $num_sections) {
     print "f($M[1]{x}) = $f1\n";
 
     foreach $x (0..3) {
-	   printf("%12g %12g\n", $M[$x]{x}, $M[$x]{y});
+	printf("%12g %12g\n", $M[$x]{x}, $M[$x]{y});
     }
 
     $f0_prime =  $params{c};
@@ -151,8 +143,9 @@ foreach $x (0..$num_sections) {
 print PLOT "set xrange [0:$track_length]\n";
 print PLOT "plot sample \\\n";
 
+
 #
-# plot 20 at a time to keep the chaos down. 
+# Plot max of 20 lines at a time
 #
 foreach $x (0..$num_sections) {
    $x_0 = $all_geo[$x]{X};
@@ -163,8 +156,7 @@ foreach $x (0..$num_sections) {
       unless($x &&
 	     (($x % 20) == 0) ||
 	     ($num_sections - x < 20)) {
-	      
-         print PLOT ", \\";
+	 print PLOT ", \\";
       }
    }
    print PLOT "\n";

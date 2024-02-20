@@ -8,11 +8,12 @@ alt_%.txt : %.kml
 
 
 do_plot_%.txt : alt_%.txt
-	./4p $< > $@
+	./4p $< 
 
 
 clean:
-	-rm LPL_alt.txt
-	-rm do_plot_LPL.txt
+	-rm alt_LPL.txt
+	-rm __do_plot_all.txt
+	-rm __gtk_csv.TXT
 
-.PRECIOUS: %_alt.txt
+.PRECIOUS: alt_%.txt
