@@ -1,15 +1,15 @@
 # 4p (Work in Progress!)
-Create GPL track editing altitude trace equation coefficients. Each equation is defned by 4 point sets. 
+Create GPL track editing altitude trace equation coefficients. Each equation is defned by 4 point sets that make up the previous, current and next sections start and end points. 
 
 Import altitude data one column for each trace.
 
 Input Format:
 
-`   Section Length, Track X, Trace 1 Altitude, Trace 2 Altitude, ...`
+`   Section Name, Section Length, Track X, Trace 1 Altitude, Trace 2 Altitude, ...`
 
-Where `Trace X` is the track length X value at the beginning of the section and `Trace Altitude` is the elevation (Y value) at the start of the section.
+Where `Trace X` is the track length X value at the beginning of the section and `Trace Altitude` is the elevation (Y value) at the start of the section for each trace.
 
-The 4p program creates stitched gnuplot formulas for each trace and section of the track for visualizing equation curves. 
+The 4p program also creates stitched gnuplot derived formulas for each trace and section of the track for visualizing equation curves. 
 
 
 Equations for solving functions. 
@@ -29,8 +29,8 @@ $f'(L) = S_L = 3AL^2 + 2BL^2 + S_0   \textnormal{;   Slope at the end of a secti
 
 Subtract $2f(L) - Lf'(L)$ to get $A$
 
-$A = \frac{L(S_0 + S_L) + 2(Y_0 - Y_L)}{L^3}$
+$A = 1/L^3 [L(S_0 + S_L) + 2(Y_0 - Y_L)]$
 
 Solve for $B$ in $f'(x)'$
 
-$B = \frac{(-2S_0 - S_L) - 3(Y_0 - Y_L)}{L^2}$
+$B = 1/L^2 [(-2S_0 - S_L) - 3(Y_0 - Y_L)]$
