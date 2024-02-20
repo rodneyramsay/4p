@@ -178,10 +178,16 @@ open(GTK_TXT, ">", "__gtk_csv.TXT") or
     die "Unable to open __gtk_csv.TXT\n";
 
 foreach $x (0..$num_sections) {
+
+   $L = $all_geo[$x]{L};
+   $a_tics = $L**3 * &all_params[$x]{a};
+   $b_tics = $L**2 * $all_params[$x]{b};
+   $c_tics = $L    * $all_params[$x]{c];
+
 #   print GTK_TXT "gradient_angle_0 = atan2($all_params[$x]{c}, $all_geo[$x]{L_tics})\n";
    $gradient_angle_0 = atan2($all_params[$x]{c}, $all_geo[$x]{L_tics});
-   print GTK_TXT "$x, $all_geo[$x]{L_tics}, $all_params[$x]{d} , $all_params[$x]{a} , $all_params[$x]{b} , $all_params[$x]{c}, $gradient_angle_0";
-   print GTK_TXT ", $all_geo[$x]{L_tics}, $all_params[$x]{d} , $all_params[$x]{a} , $all_params[$x]{b} , $all_params[$x]{c}, $gradient_angle_0";
+   print GTK_TXT "$x, $all_geo[$x]{L_tics}, $all_params[$x]{d} , $a_tics , $b_tics , $c_tics, $gradient_angle_0";
+   print GTK_TXT ", $all_geo[$x]{L_tics}, $all_params[$x]{d} , $ams[$x]{c}, $gradient_angle_0";
    for($ii = 2; $ii < $MAX_TRACES; $ii++) {
       print GTK_TXT ", 0, 0, 0, 0, 0, 0.0";
    }
