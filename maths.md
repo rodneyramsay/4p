@@ -8,7 +8,7 @@ Height at end of section $Y_L$
 
 Slope at start of section $S_0$
 
-Slope at end of sextion $S_Y$
+Slope at end of section $S_Y$
 
 
 $$f(x) = Ax^3 + Bx^2 + Cx + D$$
