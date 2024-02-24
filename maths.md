@@ -11,7 +11,7 @@ Slope at start of section $S_0$
 Slope at end of sextion $S_Y$
 
 
-$$f(x) = Ax^3 + Bx^2 + Cx + Y_0$$
+$$f(x) = Ax^3 + Bx^2 + Cx + D$$
 
 $$f'(x) = 3Ax^2 + 2Bx + C$$
 
