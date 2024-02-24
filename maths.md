@@ -51,7 +51,7 @@ $$D_{[0:1]} = D_{[0:L]}$$
 
 ==================================================================
 
-Altitude Function Parameters
+**Altitude Function Parameters**
 
 **$$A = L(S_0 + S_L) + 2(Y_0 - Y_L)$$**
 
