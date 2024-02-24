@@ -1,0 +1,15 @@
+make do_plot_LPL.txt
+make[1]: Entering directory '/c/GPLEdit/4p-main'
+./x_kml LPL.kml > alt_LPL.txt
+./4p alt_LPL.txt 
+r[0] = 0, Y=3529 L=87.654035552648
+r[1] = 0, Y=3346.242633280369 L=60.816865194897
+r[2] = 0, Y=3345.314677595691 L=236.866076970937
+r[3] = 0, Y=3355.119653096715 L=272.572778586249
+0 3529
+0 3346.242633280369
+0 3345.314677595691
+0 3355.119653096715
+
+
+make[1]: Leaving directory '/c/GPLEdit/4p-main'

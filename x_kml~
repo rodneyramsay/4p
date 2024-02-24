@@ -130,9 +130,9 @@ foreach $section_name (@sections_sorted) {
       $altitude1{$section_name} = $altitude0{$sections_sorted[$jj + 1]};
       $jj++;
    }
-
+   
    $total_length += $path_lengths{$section_name};
-   print "$section_name, $path_lengths{$section_name}, $altitude0{$section_name}, $altitude0{$section_name}\n";
+   print "$section_name, $path_lengths{$section_name}, $total_length, $altitude0{$section_name}, $altitude1{$section_name}\n";
 }
 
 

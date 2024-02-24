@@ -1,4 +1,9 @@
 
+a:
+	$(MAKE) clean
+	$(MAKE) all
+	less __gtk_csv.txt
+
 all:
 	$(MAKE) do_plot_LPL.txt
 
