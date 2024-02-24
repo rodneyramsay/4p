@@ -1,5 +1,7 @@
 Equations for solving functions.
 
+Length of section $L$
+
 Height at start of section $Y_0$
 
 Height at end of section $Y_L$
