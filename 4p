@@ -62,7 +62,12 @@ foreach $section (0..$num_sections) {
 	 #
 	 $M[$x]{l} = $t[1];
 	 $M[$x]{x} = $section_x[$x];
-	 $M[$x]{y} = $t[$trace + 2];
+	 if(defined($t[$trace + 2])) {
+	    $M[$x]{y} = $t[$trace + 2];
+	 }
+	 else {
+	    $M[$x]{y} = 0;
+	 }
 
 	 print "r[$x][$trace] = $M[$x]{x}, Y=$M[$x]{y} L=$M[$x]{l}\n";
       }
@@ -71,7 +76,7 @@ foreach $section (0..$num_sections) {
       # X locations relative to 0
       #
       foreach $x (0..3) {
-	 print "$M[$x]{x} $M[$x]{y}\n";
+         print "$M[$x]{x} $M[$x]{y}\n";
       }
       print "\n\n";
 
@@ -121,7 +126,7 @@ foreach $section (0..$num_sections) {
       print "f($M[1]{x}) = $f1\n";
 
       foreach $x (0..3) {
-	 printf("%12g %12g\n", $M[$x]{x}, $M[$x]{y});
+         printf("%12g %12g\n", $M[$x]{x}, $M[$x]{y});
       }
 
       $f0_prime =  $params{c};
@@ -157,16 +162,17 @@ print PLOT "plot sample \\\n";
 # Plot max of 20 sections at a time
 #
 foreach $x (0..$num_sections) {
-   foreach $trace (0..$MAX_TRACES) {
+   foreach $trace (0..$MAX_TRACES-1) {
       $x_0 = $all_geo[$x][$trace]{X};
       $x_1 = ($all_geo[$x][$trace]{L} + $all_geo[$x][$trace]{X});
-      print PLOT "     [${x_0}:${x_1}] f_$x(x-${x_0})";
+
+      print PLOT "     [${x_0}:${x_1}] f_${x}_${trace}(x-${x_0})"; 
 
       if($x < $num_sections) {
 	 unless($x &&
 		(($x % 20) == 0) ||
 		($num_sections - x < 20)) {
-	    print PLOT ", \\";
+	    print PLOT ", \\\n";
 	 }
       }
    }
@@ -188,16 +194,40 @@ close(PLOT);
 open(GTK_TXT, ">", "__gtk_csv.TXT") or
     die "Unable to open __gtk_csv.TXT\n";
 
+#
+#
+#
 foreach $x (0..$num_sections) {
 
    print GTK_TXT "$x,$all_geo[$x][$trace]{L_tics}";
 
-   foreach $trace (0..$MAX_TRACES) {
+   #
+   #
+   #
+   foreach $trace (0..$MAX_TRACES-1) {
 
+      #
+      # If a coefficient is missing, 0 out all of them.
+      #
       unless(defined($all_params[$x][$trace]{a}) &&
 	     defined($all_params[$x][$trace]{b}) &&
 	     defined($all_params[$x][$trace]{c}) &&
 	     defined($all_params[$x][$trace]{d})) {
+
+	 #
+	 # Error unless all of them are missing.
+	 #
+	 if(defined($all_params[$x][$trace]{a}) ||
+	    defined($all_params[$x][$trace]{b}) ||
+	    defined($all_params[$x][$trace]{c}) ||
+	    defined($all_params[$x][$trace]{d})) {
+
+	    print "ERROR 1 or more parameters missing $x/$trace\n";
+	    print "A = $all_params[$x][$trace]{a}\n";
+	    print "B = $all_params[$x][$trace]{b}\n";
+	    print "C = $all_params[$x][$trace]{c}\n";
+	    print "D = $all_params[$x][$trace]{d}\n";
+	 }
 
 	 $all_params[$x][$trace]{a} = 0;
 	 $all_params[$x][$trace]{b} = 0;
@@ -205,39 +235,52 @@ foreach $x (0..$num_sections) {
 	 $all_params[$x][$trace]{d} = 0;
 	 $gradient_angle_0 = "0.0";
       }
-      else {
-	 $gradient_angle_0 = atan2($all_params[$x][$trace]{c}, $all_geo[$x][$trace]{L});
+
+      $gradient_angle_0 = sprintf("%.6f", atan2($all_params[$x][$trace]{c}, $all_geo[$x][$trace]{L}));
+      if($gradient_angle_0 eq "0.000000") {
+	 $gradient_angle_0 = "0.0";
       }
 
+      #
+      # Normalize functions for 0->1 domain.
+      #
+      $L = $all_geo[$x][$trace]{L};
+      $a_tics = $L**3 * $all_params[$x][$trace]{a};
+      $b_tics = $L**2 * $all_params[$x][$trace]{b};
+      $c_tics = $L    * $all_params[$x][$trace]{c};
+      $d_tics = $all_params[$x][$trace]{d};
+      
 
-      $all_params[$x][$trace]{a} *= $L**3;
-      $all_params[$x][$trace]{b} *= $L**2;
-      $all_params[$x][$trace]{c} *= $L;
-
-      if($all_params[$x][$trace]{a}) {
-	 $A = sprintf("%.6f", $all_params[$x][$trace]{a});
+      #
+      # Formating for floats
+      #
+      if($a_tics) {
+	 $A = sprintf("%.6f", $a_tics);
       } else {
 	 $A = 0;
       }
 
-      if($all_params[$x][$trace]{b}) {
-	 $B = sprintf("%.6f", $all_params[$x][$trace]{b});
+      if($b_tics) {
+	 $B = sprintf("%.6f", $b_tics);
       } else {
 	 $B = 0;
       }
 
-      if($all_params[$x][$trace]{c}) {
-	 $C = sprintf("%.6f", $all_params[$x][$trace]{c});
+      if($c_tics) {
+	 $C = sprintf("%.6f", $c_tics);
       } else {
 	 $C = 0;
       }
 
-      if($all_params[$x][$trace]{d}) {
-	 $D = sprintf("%.6f", $all_params[$x][$trace]{d});
+      if($d_tics) {
+	 $D = sprintf("%.6f", $d_tics);
       } else {
 	 $D = 0;
       }
 
+      #
+      # CSV for this section/trace
+      # 
       print GTK_TXT
 	  ",$D," .
 	  "$A," .
@@ -245,12 +288,8 @@ foreach $x (0..$num_sections) {
 	  "$C," .
 	  "$gradient_angle_0";
 
-##         print GTK_TXT ",$all_params[$x][$trace]{d}," .
-##	  "$all_params[$x][$trace]{a}," .
-##	  "$all_params[$x][$trace]{b}," .
-##	  "$all_params[$x][$trace]{c}," .
-##	  "$gradient_angle_0";
-}
+
+   }
 
    print GTK_TXT "\n";
 }
