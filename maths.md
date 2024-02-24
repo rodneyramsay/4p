@@ -30,7 +30,7 @@ $$A = \frac{L(S_0 + S_L) + 2(Y_0 - Y_L)}{L^3}$$
 
 Solve for $B$ in $f'(x)'$
 
-$$B = \frac{(-2S_0 - S_L) - 3(Y_0 - Y_L)}{L^2}$$
+$$B = \frac{L(-2S_0 - S_L) - 3(Y_0 - Y_L)}{L^2}$$
 
 $$C = S_0$$
 
@@ -55,7 +55,7 @@ Altitude Function Parameters
 
 $$A = L(S_0 + S_L) + 2(Y_0 - Y_L)$$
 
-$$B = (-2S_0 - S_L) - 3(Y_0 - Y_L)$$
+$$B = L(-2S_0 - S_L) - 3(Y_0 - Y_L)$$
 
 $$C = LS_0$$
 
