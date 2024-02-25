@@ -7,7 +7,7 @@ Input Format:
 
 `   Section Name, Section Length, Track X, Trace 1 Altitude, Trace 2 Altitude, ...`
 
-Where `Trace X` is the track length X value at the beginning of the section and `Trace Altitude` is the elevation (Y value) at the start of the section for each trace.
+Where `Trace Altitude` is the elevation (Y value) at the start of the section for each trace.
 
 The 4p program also creates stitched gnuplot derived formulas for each trace and section of the track for visualizing equation curves. 
 
@@ -34,3 +34,13 @@ $A = 1/L^3 [L(S_0 + S_L) + 2(Y_0 - Y_L)]$
 Solve for $B$ in $f'(x)'$
 
 $B = 1/L^2 [(-2S_0 - S_L) - 3(Y_0 - Y_L)]$
+
+Scale for x = [0:1].
+
+$A = L(S_0 + S_L) + 2(Y_0 - Y_L)$
+$B = (-2S_0 - S_L) - 3(Y_0 - Y_L)$
+$C = LS_0$
+$D - Y_0$
+
+
+
