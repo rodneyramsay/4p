@@ -5,7 +5,7 @@ Import altitude data one column for each trace.
 
 Input Format:
 
-`   Section Name, Section Length, Track X, Trace 1 Altitude, Trace 2 Altitude, ...`
+`   Section Name, Section Length, Trace 1 Altitude, Trace 2 Altitude, ...`
 
 Where `Trace Altitude` is the elevation (Y value) at the start of the section for each trace.
 
@@ -35,12 +35,20 @@ Solve for $B$ in $f'(x)'$
 
 $B = 1/L^2 [(-2S_0 - S_L) - 3(Y_0 - Y_L)]$
 
-Scale for x = [0:1].
+
+Convert range from [0:L] to [0:1]
+
+$A_{[0:1]} = L^3 A_{[0:L]}$
+
+$B_{[0:1]} = L^2 B_{[0:L]}$
+
+$C_{[0:1]} = L C_{[0:L]}$
+
+$D_{[0:1]} = D_{[0:L]}$
 
 $A = L(S_0 + S_L) + 2(Y_0 - Y_L)$
 $B = (-2S_0 - S_L) - 3(Y_0 - Y_L)$
 $C = LS_0$
 $D - Y_0$
-
 
 
