@@ -1,0 +1,95 @@
+\documentclass{article}
+\begin{document}
+
+Equations for solving functions.\\
+\bigbreak
+
+Length of section = $L$
+
+Height at start of section = $Y_0$
+
+Height at end of section = $Y_L$
+
+Slope at start of section = $S_0$
+
+Slope at end of sextion = $S_Y$
+
+
+\begin{equation}
+  f(x) = Ax^3 + Bx^2 + Cx + D
+\end{equation}
+
+\begin{equation}
+  f'(x) = 3Ax^2 + 2Bx + C
+\end{equation}
+
+\begin{equation}
+  f(0) = Y_0 = D
+\end{equation}
+
+\begin{equation}
+  f(L) = Y_L = AL^3 + BL^2 + CL + D
+\end{equation}
+
+\begin{equation}
+  f'(0) = S_0 = C
+\end{equation}
+
+\begin{equation}
+  f'(L) = S_L = 3AL^2 + 2BL^2 + S_0
+\end{equation}
+
+\bigbreak
+\bigbreak
+Subtract $2f(L) - Lf'(L)$ to get $A$
+\bigbreak
+\bigbreak
+
+\begin{equation}
+  A = \frac{L(S_0 + S_L) + 2(Y_0 - Y_L)}{L^3}
+\end{equation}
+
+\bigbreak
+\bigbreak
+Solve for $B$ in $f'(x)'$
+\bigbreak
+\bigbreak
+
+\begin{equation}
+  B = \frac{(-2S_0 - S_L) - 3(Y_0 - Y_L)}{L^2}
+\end{equation}
+
+\begin{equation}
+  C = S_0
+\end{equation}
+
+\begin{equation}
+  D = Y_0
+\end{equation}
+
+\pagebreak
+
+\bigbreak
+\bigbreak
+Convert range from $[0:L]$ to $[0:1]$
+\bigbreak
+\bigbreak
+
+\begin{equation}
+  A = L(S_0 + S_L) + 2(Y_0 - Y_L)
+\end{equation}
+
+\begin{equation}
+  B = (-2S_0 - S_L) - 3(Y_0 - Y_L)
+\end{equation}
+
+\begin{equation}
+  C = LS_0
+\end{equation}
+
+\begin{equation}
+  D = Y_0
+\end{equation}
+
+\end{document}
+

@@ -12,6 +12,7 @@ $MAX_SECTIONS = 4096;
 $jj = 0;
 $length = 0.0;
 $section_x[0] = 0.0;
+$num_traces = 0;
 
 while(<>) {
 
@@ -61,7 +62,7 @@ foreach $section (0..$num_sections) {
 	 # Store length, x, and y
 	 #
 	 $M[$x]{l} = $t[1];
-	 $M[$x]{x} = $section_x[$x];
+	 $M[$x]{x} = $section_x[$jj - 1 + $x];
 	 if(defined($t[$trace + 2])) {
 	    $M[$x]{y} = $t[$trace + 2];
 	 }
@@ -122,6 +123,8 @@ foreach $section (0..$num_sections) {
       print "f(x) = $params{a}*x**3 +  $params{b}*x**2 +  $params{c}*x +  $params{d}\n";
       print "f(0) = $params{d}\n";
 
+      print "Section[$section] Trace[$trace] X = $all_geo[$section][$trace]{X}\n";
+
       $f1 =  $params{a} * $M[1]{x}**3 + $params{b} * $M[1]{x}**2 + $params{c} * $M[1]{x} + $params{d};
       print "f($M[1]{x}) = $f1\n";
 
@@ -143,48 +146,62 @@ foreach $section (0..$num_sections) {
 #
 open(PLOT, ">", "__do_plot_all.txt") or
     die "unable to generate data __do_plot_all.txt\n";
-    
+
+$num_traces = 0;
 foreach $section (0..$num_sections) {
-   foreach $trace (0 .. $num_traces) {
-      print PLOT "f_${section}_${trace}(x) = " .
-	  "$all_params[$section][$trace]{a}*x**3 + " .
-	  "$all_params[$section][$trace]{b}*x**2 + " .
-	  "$all_params[$section][$trace]{c}*x + " .
-	  "$all_params[$section][$trace]{d}\n";
+   foreach $trace (0 .. $MAX_TRACES) {
+      if($all_params[$section][$trace]{a} ||
+	 $all_params[$section][$trace]{b} ||
+	 $all_params[$section][$trace]{c} ||
+	 $all_params[$section][$trace]{d}) {
+
+	 if($section == 0) {
+	    $num_traces++;
+	 }
+	 
+	 print PLOT "f_${section}_${trace}(x) = " .
+	     "$all_params[$section][$trace]{a}*x**3 + " .
+	     "$all_params[$section][$trace]{b}*x**2 + " .
+	     "$all_params[$section][$trace]{c}*x + " .
+	     "$all_params[$section][$trace]{d}\n";
+      }
    }
 }
 
+$num_traces--;
+
 print PLOT "set xrange [0:$track_length]\n";
-print PLOT "plot sample \\\n";
+print PLOT "splot sample \\\n";
 
 
 #
 # Plot max of 20 sections at a time
 #
-foreach $x (0..$num_sections) {
-   foreach $trace (0..$MAX_TRACES-1) {
-      $x_0 = $all_geo[$x][$trace]{X};
-      $x_1 = ($all_geo[$x][$trace]{L} + $all_geo[$x][$trace]{X});
+$ii = 1;
+foreach $section (0..$num_sections) {
+   foreach $trace (0..$num_traces) {
 
-      print PLOT "     [${x_0}:${x_1}] f_${x}_${trace}(x-${x_0})"; 
+      $x_0 = $all_geo[$section][$trace]{X};
+      $x_1 = ($all_geo[$section][$trace]{L} + $all_geo[$section][$trace]{X});
 
-      if($x < $num_sections) {
-	 unless($x &&
-		(($x % 20) == 0) ||
-		($num_sections - x < 20)) {
+      print PLOT "     [${x_0}:${x_1}] f_${section}_${trace}(x-${x_0})"; 
+
+      if($ii++ % 20 == 0) {
+	 print PLOT "\n";
+	 print PLOT "pause -1";
+	 print PLOT "\n";
+	 print PLOT "\n";
+	 print PLOT "plot sample \\\n";
+      }
+      else {
+	 unless(($section eq $num_sections) &&
+		($trace eq $num_traces)) {
 	    print PLOT ", \\\n";
 	 }
       }
    }
-   print PLOT "\n";
-
-   if($x && ($x % 20) == 0) {
-      print PLOT "pause -1";
-      print PLOT "\n";
-      print PLOT "\n";
-      print PLOT "plot sample \\\n";
-   }
 }
+print PLOT "\n";
 print PLOT "pause -1";
 print PLOT "\n";
 print PLOT "\n";
@@ -197,9 +214,9 @@ open(GTK_TXT, ">", "__gtk_csv.TXT") or
 #
 #
 #
-foreach $x (0..$num_sections) {
+foreach $section (0..$num_sections) {
 
-   print GTK_TXT "$x,$all_geo[$x][$trace]{L_tics}";
+   print GTK_TXT "$section,$all_geo[$section][$trace]{L_tics}";
 
    #
    #
@@ -209,34 +226,34 @@ foreach $x (0..$num_sections) {
       #
       # If a coefficient is missing, 0 out all of them.
       #
-      unless(defined($all_params[$x][$trace]{a}) &&
-	     defined($all_params[$x][$trace]{b}) &&
-	     defined($all_params[$x][$trace]{c}) &&
-	     defined($all_params[$x][$trace]{d})) {
+      unless(defined($all_params[$section][$trace]{a}) &&
+	     defined($all_params[$section][$trace]{b}) &&
+	     defined($all_params[$section][$trace]{c}) &&
+	     defined($all_params[$section][$trace]{d})) {
 
 	 #
 	 # Error unless all of them are missing.
 	 #
-	 if(defined($all_params[$x][$trace]{a}) ||
-	    defined($all_params[$x][$trace]{b}) ||
-	    defined($all_params[$x][$trace]{c}) ||
-	    defined($all_params[$x][$trace]{d})) {
+	 if(defined($all_params[$section][$trace]{a}) ||
+	    defined($all_params[$section][$trace]{b}) ||
+	    defined($all_params[$section][$trace]{c}) ||
+	    defined($all_params[$section][$trace]{d})) {
 
-	    print "ERROR 1 or more parameters missing $x/$trace\n";
-	    print "A = $all_params[$x][$trace]{a}\n";
-	    print "B = $all_params[$x][$trace]{b}\n";
-	    print "C = $all_params[$x][$trace]{c}\n";
-	    print "D = $all_params[$x][$trace]{d}\n";
+	    print "ERROR 1 or more parameters missing $section/$trace\n";
+	    print "A = $all_params[$section][$trace]{a}\n";
+	    print "B = $all_params[$section][$trace]{b}\n";
+	    print "C = $all_params[$section][$trace]{c}\n";
+	    print "D = $all_params[$section][$trace]{d}\n";
 	 }
 
-	 $all_params[$x][$trace]{a} = 0;
-	 $all_params[$x][$trace]{b} = 0;
-	 $all_params[$x][$trace]{c} = 0;
-	 $all_params[$x][$trace]{d} = 0;
+	 $all_params[$section][$trace]{a} = 0;
+	 $all_params[$section][$trace]{b} = 0;
+	 $all_params[$section][$trace]{c} = 0;
+	 $all_params[$section][$trace]{d} = 0;
 	 $gradient_angle_0 = "0.0";
       }
 
-      $gradient_angle_0 = sprintf("%.6f", atan2($all_params[$x][$trace]{c}, $all_geo[$x][$trace]{L}));
+      $gradient_angle_0 = sprintf("%.6f", atan2($all_params[$section][$trace]{c}, $all_geo[$section][$trace]{L}));
       if($gradient_angle_0 eq "0.000000") {
 	 $gradient_angle_0 = "0.0";
       }
@@ -244,11 +261,11 @@ foreach $x (0..$num_sections) {
       #
       # Normalize functions for 0->1 domain.
       #
-      $L = $all_geo[$x][$trace]{L};
-      $a_tics = $L**3 * $all_params[$x][$trace]{a};
-      $b_tics = $L**2 * $all_params[$x][$trace]{b};
-      $c_tics = $L    * $all_params[$x][$trace]{c};
-      $d_tics = $all_params[$x][$trace]{d};
+      $L = $all_geo[$section][$trace]{L};
+      $a_tics = $L**3 * $all_params[$section][$trace]{a};
+      $b_tics = $L**2 * $all_params[$section][$trace]{b};
+      $c_tics = $L    * $all_params[$section][$trace]{c};
+      $d_tics = $all_params[$section][$trace]{d};
       
 
       #

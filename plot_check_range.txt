@@ -22,8 +22,6 @@ D1 = D
 f(x) = A*x**3 + B*x**2 + C*x + D
 g(x) = A1*x**3 + B1*x**2 + C1*x + D1
 
-
-
 plot [0:100] f(x)
 
 pause -1

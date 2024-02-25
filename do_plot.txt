@@ -2,7 +2,6 @@
 
 f(x) = a*x**3 + b*x**2 + c*x + d
 
-
 fit f(x) '__data.txt' via a,b,c,d
 
 #plot '__data.txt', f(x)
