@@ -5,7 +5,7 @@ Import altitude data one column for each trace.
 
 Input Format:
 
-`   Section Name, Section Length, Track X, Trace 1 Altitude, Trace 2 Altitude, ...`
+`   Section Name, Section Length, Trace 1 Altitude, Trace 2 Altitude, ...`
 
 Where `Trace X` is the track length X value at the beginning of the section and `Trace Altitude` is the elevation (Y value) at the start of the section for each trace.
 
