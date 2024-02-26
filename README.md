@@ -24,7 +24,7 @@ $f(L) = Y_L = AL^3 + BL^2 + CL   \textnormal{;  Altitude at the end of a section
 
 $f'(0) = S_0 = C   \textnormal{;  Slope at the start of a section}$
 
-$f'(L) = S_L = 3AL^2 + 2BL^2 + S_0   \textnormal{;   Slope at the end of a section}$
+$f'(L) = S_L = 3AL^2 + 2BL + S_0   \textnormal{;   Slope at the end of a section}$
 
 
 Subtract $2f(L) - Lf'(L)$ to get $A$
