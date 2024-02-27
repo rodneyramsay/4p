@@ -262,10 +262,16 @@ foreach $section (0..$num_sections) {
       # Normalize functions for 0->1 domain.
       #
       $L = $all_geo[$section][$trace]{L};
-      $a_tics = $L**3 * $all_params[$section][$trace]{a};
-      $b_tics = $L**2 * $all_params[$section][$trace]{b};
-      $c_tics = $L    * $all_params[$section][$trace]{c};
-      $d_tics = $all_params[$section][$trace]{d};
+      $a = $L**3 * $all_params[$section][$trace]{a};
+      $b = $L**2 * $all_params[$section][$trace]{b};
+      $c = $L    * $all_params[$section][$trace]{c};
+      $d = $all_params[$section][$trace]{d};
+
+      $a_tics = sprintf("%d", $a * $TICS_PER_METER);
+      $b_tics = sprintf("%d", $b * $TICS_PER_METER);
+      $c_tics = sprintf("%d", $c * $TICS_PER_METER);
+      $d_tics = sprintf("%d", $d * $TICS_PER_METER);
+      
       
 
       #
@@ -299,10 +305,10 @@ foreach $section (0..$num_sections) {
       # CSV for this section/trace
       # 
       print GTK_TXT
-	  ",$D," .
-	  "$A," .
-	  "$B," .
-	  "$C," .
+	  ",$d_tics," .
+	  "$a_tics," .
+	  "$b_tics," .
+	  "$c_tics," .
 	  "$gradient_angle_0";
 
 

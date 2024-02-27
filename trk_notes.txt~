@@ -1,0 +1,22 @@
+
+
+
+
+
+# Section Info at end of file.
+# 58 bytes for each section
+
+0x00   0 char    straight/curve
+0x04   4 int32   Start
+0x08   8 int32   SectTicLen
+0x0C  12 int32   Orientation
+0x10  16 int32   ???
+0x14  20 int32   Center X
+0x18  24 int32   Center Y
+0x1C  28 int32   Curvature (angle)
+0x20  32 int32   ???
+0x24  36 int32   ???
+0x28  40 int32   ???
+0x2C  44 int32   ???
+0x30  48 int32   ???
+0x34  52 int32   ???
