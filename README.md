@@ -14,17 +14,17 @@ The 4p program also creates stitched gnuplot derived formulas for each trace and
 
 Equations for solving functions. 
 
-$f(x) = Ax^3 + Bx^2 + Cx + D  \textnormal{; Equation for altitude or Y at any X location}$
+$f(x) = Ax^3 + Bx^2 + Cx + D$ ; Equation for altitude or Y at any X location
 
-$f'(x) = 3Ax^2 + 2Bx + C  \textnormal{;  Equation derivitave for slope of altitudes}$
+$f'(x) = 3Ax^2 + 2Bx + C$;  Equation derivitave for slope of altitudes
 
-$f(0) = Y_0 = D  \textnormal{;  Altitude at the start of a section}$
+$f(0) = Y_0 = D$;  Altitude at the start of a section
 
-$f(L) = Y_L = AL^3 + BL^2 + CL   \textnormal{;  Altitude at the end of a section}$
+$f(L) = Y_L = AL^3 + BL^2 + CL$;  Altitude at the end of a section
 
-$f'(0) = S_0 = C   \textnormal{;  Slope at the start of a section}$
+$f'(0) = S_0 = C$;  Slope at the start of a section
 
-$f'(L) = S_L = 3AL^2 + 2BL^2 + S_0   \textnormal{;   Slope at the end of a section}$
+$f'(L) = S_L = 3AL^2 + 2BL + S_0$;   Slope at the end of a section
 
 
 Subtract $2f(L) - Lf'(L)$ to get $A$
@@ -46,12 +46,16 @@ $C_{[0:1]} = L C_{[0:L]}$
 
 $D_{[0:1]} = D_{[0:L]}$
 
-$A = L(S_0 + S_L) + 2(Y_0 - Y_L)$
 
-$B = (-2S_0 - S_L) - 3(Y_0 - Y_L)$
+**============================================================================**
 
-$C = LS_0$
 
-$D - Y_0$
+### **$A = L(S_0 + S_L) + 2(Y_0 - Y_L)$**
+
+### **$B = (-2S_0 - S_L) - 3(Y_0 - Y_L)$**
+
+### **$C = LS_0$**
+
+### **$D = Y_0$**
 
 
