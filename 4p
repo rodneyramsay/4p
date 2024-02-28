@@ -17,12 +17,17 @@ $num_traces = 0;
 while(<>) {
 
    if(m/^\S+,\s*([0-9\.]+)\,/) {
-      $length += $1;
+      $section_length[$jj] = $1;
+      $length += $section_length[$jj];
       $section_x[$jj + 1] = $length;
    }
    chomp();
    push(@strings, $_);
    $jj++;
+}
+
+foreach $x (@section_x) {
+   print "section_x = $x\n";
 }
 
 $track_length = $length;
@@ -56,13 +61,35 @@ foreach $section (0..$num_sections) {
  	    $jj = 0;
 	 }
 
-	 @t = split(/, /, $strings[$jj++]);
+	 @t = split(/, /, $strings[$jj]);
 	 
 	 #
 	 # Store length, x, and y
 	 #
-	 $M[$x]{l} = $t[1];
-	 $M[$x]{x} = $section_x[$jj - 1 + $x];
+	 $M[$x]{l} = $section_length[$jj];
+
+	 if(($section == 0) &&
+	    ($x == 0)) {
+	       $M[$x]{x} = -1 * $section_length[$num_sections];
+	 }
+	 elsif(($section == $num_sections) &&
+	       ($x == 2)) {
+	    $M[$x]{x} = $section_x[$num_sections] + $section_length[$num_sections];
+	 }
+	 elsif(($section == $num_sections) &&
+	       ($x == 3)) {
+	    $M[$x]{x} =
+		$section_x[$num_sections] +
+		$section_length[$num_sections] +
+		$section_length[0];
+	 }
+	 else {
+	    $M[$x]{x} = $section_x[$jj];
+	 }
+
+	 $jj++;
+
+
 	 if(defined($t[$trace + 2])) {
 	    $M[$x]{y} = $t[$trace + 2];
 	 }
@@ -70,7 +97,7 @@ foreach $section (0..$num_sections) {
 	    $M[$x]{y} = 0;
 	 }
 
-	 print "r[$x][$trace] = $M[$x]{x}, Y=$M[$x]{y} L=$M[$x]{l}\n";
+	 print "r[$x][$trace] = X=$M[$x]{x}, Y=$M[$x]{y} L=$M[$x]{l}\n";
       }
 
       #
@@ -171,7 +198,7 @@ foreach $section (0..$num_sections) {
 $num_traces--;
 
 print PLOT "set xrange [0:$track_length]\n";
-print PLOT "splot sample \\\n";
+print PLOT "plot sample \\\n";
 
 
 #
