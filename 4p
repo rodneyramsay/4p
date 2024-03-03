@@ -111,17 +111,42 @@ foreach $section (0..$num_sections) {
       $slope_left  = ($M[1]{y} - $M[0]{y}) / ($M[1]{x} - $M[0]{x});
       $slope_mid   = ($M[2]{y} - $M[1]{y}) / ($M[2]{x} - $M[1]{x});
       $slope_right = ($M[3]{y} - $M[2]{y}) / ($M[3]{x} - $M[2]{x});
+      $slope_3pl    = ($M[2]{y} - $M[0]{y}) / ($M[2]{x} - $M[0]{x});
+      $slope_3pr    = ($M[3]{y} - $M[1]{y}) / ($M[3]{x} - $M[1]{x});
 
       print "left =  ($M[1]{y} - $M[0]{y}) / ($M[1]{x} - $M[0]{x}) = $slope_left;\n";
       print "mid =   ($M[2]{y} - $M[1]{y}) / ($M[2]{x} - $M[1]{x}) = $slope_mid;\n";
       print "right = ($M[3]{y} - $M[2]{y}) / ($M[3]{x} - $M[2]{x}) = $slope_right;\n";
       
 
-      $S0 = ($slope_mid + $slope_left) / 2.0;
-      $SL = ($slope_right + $slope_mid) / 2.0;
+#      $S0 = ($slope_mid + $slope_left) / 2.0;
+#      $SL = ($slope_right + $slope_mid) / 2.0;
 
-      print "S0=$S0\n";
-      print "SL=$SL\n";
+
+      $length_left  = sqrt(($M[1]{x}-$M[0]{x})**2 + ($M[1]{y}-$M[0]{y})**2);
+      $length_mid   = sqrt(($M[2]{x}-$M[1]{x})**2 + ($M[2]{y}-$M[1]{y})**2);
+      $length_right = sqrt(($M[3]{x}-$M[2]{x})**2 + ($M[3]{y}-$M[2]{y})**2);
+
+
+      if($section == 0) {
+	 $S0 = $slope_left;
+      }
+      else {
+	 $S0 = $all_geo[$section-1][$trace]{SL};
+      }
+
+#       $SL = $slope_mid;
+#       $SL = $slope_right;
+#      $SL = ($slope_mid + $slope_right) / 2.0;
+      if(abs($slope_mid) < abs($slope_right)) {
+	 $SL = $slope_mid;
+      }
+      else {
+	 $SL = $slope_right;
+      }
+
+      print "S0 = $S0\n";
+      print "SL = $SL\n";
 
       $L = $M[2]{x} - $M[1]{x};
       print "L=$L\n";
@@ -146,6 +171,9 @@ foreach $section (0..$num_sections) {
       $all_geo[$section][$trace]{L} = $M[1]{l};
       $all_geo[$section][$trace]{L_tics} = sprintf("%d", $TICS_PER_METER * $M[1]{l});
       $all_geo[$section][$trace]{X} = $M[1]{x};
+
+      $all_geo[$section][$trace]{S0} = $S0;
+      $all_geo[$section][$trace]{SL} = $SL;
 
       print "f(x) = $params{a}*x**3 +  $params{b}*x**2 +  $params{c}*x +  $params{d}\n";
       print "f(0) = $params{d}\n";
