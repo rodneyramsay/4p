@@ -4,7 +4,13 @@ use MATH::Trig;
 use Math::MatrixLUP;
 use Getopt::Std;
 
-getopts(hs);
+getopts('hs:');
+if(defined($opt_s)) {
+   $smooth = $opt_s;
+}
+else {
+   $smooth = 4.0;
+}
 
 $TICS_PER_METER = 19685.0;
 $MAX_TRACES = 16;
@@ -67,12 +73,15 @@ foreach $x (@section_x) {
 
 $track_length = $length;
 $num_sections = $#strings;
+@t = split(/, /, $strings[0]);
+$num_traces = $#t - 2;
+
 
 #
 # Loop through all the sections.
 #
 foreach $section (0..$num_sections) {
-   foreach $trace (0..$MAX_TRACES) {
+   foreach $trace (0..$num_traces) {
 
       #
       # Start function on previous section.
@@ -93,7 +102,7 @@ foreach $section (0..$num_sections) {
 	 # Wrap around to start.
 	 #
 	 if($jj > $num_sections) {
- 	    $jj = 0;
+	    $jj = 0;
 	 }
 
 	 @t = split(/, /, $strings[$jj]);
@@ -105,7 +114,7 @@ foreach $section (0..$num_sections) {
 
 	 if(($section == 0) &&
 	    ($x == 0)) {
-	       $M[$x]{x} = -1 * $section_length[$num_sections];
+	    $M[$x]{x} = -1 * $section_length[$num_sections];
 	 }
 	 elsif(($section == $num_sections) &&
 	       ($x == 2)) {
@@ -125,12 +134,7 @@ foreach $section (0..$num_sections) {
 	 $jj++;
 
 
-	 if(defined($t[$trace + 2])) {
-	    $M[$x]{y} = $t[$trace + 2];
-	 }
-	 else {
-	    $M[$x]{y} = 0;
-	 }
+	 $M[$x]{y} = $t[$trace + 2];
 
 	 print "r[$x][$trace] = X=$M[$x]{x}, Y=$M[$x]{y} L=$M[$x]{l}\n";
       }
@@ -139,7 +143,7 @@ foreach $section (0..$num_sections) {
       # X locations relative to 0
       #
       foreach $x (0..3) {
-         print "$M[$x]{x} $M[$x]{y}\n";
+	 print "$M[$x]{x} $M[$x]{y}\n";
       }
       print "\n\n";
 
@@ -153,110 +157,85 @@ foreach $section (0..$num_sections) {
       print "mid =   ($M[2]{y} - $M[1]{y}) / ($M[2]{x} - $M[1]{x}) = $slope_mid;\n";
       print "right = ($M[3]{y} - $M[2]{y}) / ($M[3]{x} - $M[2]{x}) = $slope_right;\n";
       
-
-#      $S0 = ($slope_mid + $slope_left) / 2.0;
-#      $SL = ($slope_right + $slope_mid) / 2.0;
-
-
       $length_left  = sqrt(($M[1]{x}-$M[0]{x})**2 + ($M[1]{y}-$M[0]{y})**2);
       $length_mid   = sqrt(($M[2]{x}-$M[1]{x})**2 + ($M[2]{y}-$M[1]{y})**2);
       $length_right = sqrt(($M[3]{x}-$M[2]{x})**2 + ($M[3]{y}-$M[2]{y})**2);
 
 
+      if(abs($slope_mid) < abs($slope_right)) {
+	 $SL = $slope_mid + ($slope_right + $slope_mid) / $smooth;
+      }
+      else {
+	 $SL = $slope_right + ($slope_right + $slope_mid) / $smooth;
+      }
+
       if($section == 0) {
 	 if(abs($slope_left) < abs($slope_mid)) {
-	    $S0 = $slope_left;
+ 	    $S0 = $slope_left + ($slope_mid + $slope_left) / $smooth;
 	 }
 	 else {
-	    $SL = $slope_mid;
+ 	    $S0 = $slope_mid + ($slope_mid + $slope_left) / $smooth;
 	 }
+	     
       }
       else {
 	 $S0 = $all_geo[$section-1][$trace]{SL};
       }
+	 
 
-#       $SL = $slope_mid;
-#       $SL = $slope_right;
-      #      $SL = ($slope_mid + $slope_right) / 2.0;
-
-      ($fit_a, $fit_b, $fit_c, $fit_d) =
-	  &fit_4_points($M[0]{x}, $M[0]{y},
-			$M[1]{x}, $M[1]{y},
-			$M[2]{x}, $M[2]{y},
-			$M[3]{x}, $M[3]{y});
-
-
-      print "FIT:$fit_a, $fit_b, $fit_c, $fit_d)\n";
+      if(defined($t[$trace+2])) {
       
-			
-      if(abs($slope_mid) < abs($slope_right)) {
-	 $SL = $slope_mid;
-      }
-      else {
-	 $SL = $slope_right;
-      }
+	 print "S0 = $S0\n";
+	 print "SL = $SL\n";
 
-      if(defined($opt_s)) {
-	 if($section == 0) {
-	    $S0 = (3 * $fit_a * $M[1]{x}**2) + (2 * $fit_b * $M[1]{x}) + $fit_c;
+	 $L = $M[2]{x} - $M[1]{x};
+	 print "L=$L\n";
 
+	 $Y0 = $M[1]{y};
+	 $YL = $M[2]{y};
+
+	 $params{d} = $Y0;
+	 $params{c} = $S0;
+
+	 $params{a} = 1.0 / $L**3 * ($L * ($S0 + $SL) + 2.0 * ($Y0 - $YL));
+	 print "params{a} = 1.0 / $L**3 * ($L * ($S0 + $SL) + 2.0 * ($Y0 - $YL)) = $params{a};\n";
+
+	 $params{b} = (1.0 / $L**2) * ($L * (-2.0 * $S0 - $SL) - 3.0 * ($Y0 - $YL));
+	 print "$params{b} = (1.0 / $L**2) * ($L * (-2.0 * $S0 - $SL) - 3.0 * ($Y0 - $YL)) = $params{b}\n";
+
+	 $all_params[$section][$trace]{a} = $params{a};
+	 $all_params[$section][$trace]{b} = $params{b};
+	 $all_params[$section][$trace]{c} = $params{c};
+	 $all_params[$section][$trace]{d} = $params{d};
+
+	 $all_geo[$section][$trace]{L} = $M[1]{l};
+	 $all_geo[$section][$trace]{L_tics} = sprintf("%d", $TICS_PER_METER * $M[1]{l});
+	 $all_geo[$section][$trace]{X} = $M[1]{x};
+
+	 $all_geo[$section][$trace]{S0} = $S0;
+	 $all_geo[$section][$trace]{SL} = $SL;
+
+	 print "f(x) = $params{a}*x**3 +  $params{b}*x**2 +  $params{c}*x +  $params{d}\n";
+	 print "f(0) = $params{d}\n";
+
+	 print "Section[$section] Trace[$trace] X = $all_geo[$section][$trace]{X}\n";
+
+	 $f1 =  $params{a} * $M[1]{x}**3 + $params{b} * $M[1]{x}**2 + $params{c} * $M[1]{x} + $params{d};
+	 print "f($M[1]{x}) = $f1\n";
+
+	 foreach $x (0..3) {
+	    printf("%12g %12g\n", $M[$x]{x}, $M[$x]{y});
 	 }
 
-	 $SL = (3 * $fit_a * $M[2]{x}**2) + (2 * $fit_b * $M[2]{x}) + $fit_c;
+	 $f0_prime =  $params{c};
+	 $f1_prime = 3 * $params{a} * $M[2]{x}**2 + 2 * $params{b} * $M[1]{x} + $params{c};
 
+	 print "f_prime(0) = $f0_prime\n";
+	 print "f_prime($M[2]{x}) = $f1_prime\n";
       }
-      
-
-      print "S0 = $S0\n";
-      print "SL = $SL\n";
-
-      $L = $M[2]{x} - $M[1]{x};
-      print "L=$L\n";
-
-      $Y0 = $M[1]{y};
-      $YL = $M[2]{y};
-
-      $params{d} = $Y0;
-      $params{c} = $S0;
-
-      $params{a} = 1.0 / $L**3 * ($L * ($S0 + $SL) + 2.0 * ($Y0 - $YL));
-      print "params{a} = 1.0 / $L**3 * ($L * ($S0 + $SL) + 2.0 * ($Y0 - $YL)) = $params{a};\n";
-
-      $params{b} = (1.0 / $L**2) * ($L * (-2.0 * $S0 - $SL) - 3.0 * ($Y0 - $YL));
-      print "$params{b} = (1.0 / $L**2) * ($L * (-2.0 * $S0 - $SL) - 3.0 * ($Y0 - $YL)) = $params{b}\n";
-
-      $all_params[$section][$trace]{a} = $params{a};
-      $all_params[$section][$trace]{b} = $params{b};
-      $all_params[$section][$trace]{c} = $params{c};
-      $all_params[$section][$trace]{d} = $params{d};
-
-      $all_geo[$section][$trace]{L} = $M[1]{l};
-      $all_geo[$section][$trace]{L_tics} = sprintf("%d", $TICS_PER_METER * $M[1]{l});
-      $all_geo[$section][$trace]{X} = $M[1]{x};
-
-      $all_geo[$section][$trace]{S0} = $S0;
-      $all_geo[$section][$trace]{SL} = $SL;
-
-      print "f(x) = $params{a}*x**3 +  $params{b}*x**2 +  $params{c}*x +  $params{d}\n";
-      print "f(0) = $params{d}\n";
-
-      print "Section[$section] Trace[$trace] X = $all_geo[$section][$trace]{X}\n";
-
-      $f1 =  $params{a} * $M[1]{x}**3 + $params{b} * $M[1]{x}**2 + $params{c} * $M[1]{x} + $params{d};
-      print "f($M[1]{x}) = $f1\n";
-
-      foreach $x (0..3) {
-         printf("%12g %12g\n", $M[$x]{x}, $M[$x]{y});
-      }
-
-      $f0_prime =  $params{c};
-      $f1_prime = 3 * $params{a} * $M[2]{x}**2 + 2 * $params{b} * $M[1]{x} + $params{c};
-
-      print "f_prime(0) = $f0_prime\n";
-      print "f_prime($M[2]{x}) = $f1_prime\n";
-   }
+   }      
 }
- 
+
 
 #
 # Create plot file(s) for gnuplot
@@ -265,8 +244,8 @@ open(PLOT, ">", "__do_plot_all.txt") or
     die "unable to generate data __do_plot_all.txt\n";
 
 $num_traces = 0;
-foreach $section (0..$num_sections) {
-   foreach $trace (0 .. $MAX_TRACES) {
+foreach $section (0 .. $num_sections) {
+   foreach $trace (0 .. $num_traces) {
       if($all_params[$section][$trace]{a} ||
 	 $all_params[$section][$trace]{b} ||
 	 $all_params[$section][$trace]{c} ||
@@ -306,7 +285,6 @@ foreach $section (0..$num_sections) {
       if($ii++ % 60 == 0) {
 	 print PLOT "\n";
 	 print PLOT "pause -1";
-	 print PLOT "\n";
 	 print PLOT "\n";
 	 print PLOT "plot sample \\\n";
       }
