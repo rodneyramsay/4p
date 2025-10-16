@@ -1,5 +1,25 @@
-# 4p (Work in Progress!)
-Create GPL track editing altitude trace equation coefficients. Each equation is defned by 4 point sets that make up the previous, current and next sections start and end points. 
+# 4p - GPL Track Altitude Equation Generator
+
+Create GPL track editing altitude trace equation coefficients. Each equation is defined by 4 point sets that make up the previous, current and next sections start and end points.
+
+## 🆕 NEW: Improved Smoothing Methods
+
+**Problem:** The original implementation can produce overshoot (unrealistic bumps/dips) in altitude profiles.
+
+**Solution:** Use `4p_improved` with multiple smoothing methods to minimize overshoot:
+
+```bash
+# Recommended: Monotone method (no overshoot)
+./4p_improved -m 1 alt_mytrack.txt
+
+# Compare all methods
+./compare_methods.pl alt_mytrack.txt
+```
+
+📖 **See [QUICK_START.md](QUICK_START.md) for usage guide**  
+📖 **See [SMOOTHING_METHODS.md](SMOOTHING_METHODS.md) for technical details**
+
+--- 
 
 Import altitude data one column for each trace.
 
