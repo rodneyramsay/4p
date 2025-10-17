@@ -17,8 +17,11 @@ print "Comparing smoothing methods for: $input_file\n\n";
 # Run each method
 my @methods = (
    {name => "Original", cmd => "perl ./4p $input_file > output_original.txt 2>&1", plot => "__do_plot_all.txt", csv => "__gtk_csv.TXT"},
-   {name => "Monotone", cmd => "perl ./4p_improved -m 1 $input_file > output_monotone.txt 2>&1", plot => "__do_plot_all_monotone.txt", csv => "__gtk_csv_monotone.TXT"},
-   {name => "Catmull-Rom", cmd => "perl ./4p_improved -m 2 -t 0.3 $input_file > output_catmull.txt 2>&1", plot => "__do_plot_all_catmull.txt", csv => "__gtk_csv_catmull.TXT"},
+   {name => "Monotone (default)", cmd => "perl ./4p_improved -m 1 $input_file > output_monotone.txt 2>&1", plot => "__do_plot_all_monotone.txt", csv => "__gtk_csv_monotone.TXT"},
+   {name => "Monotone (s=8)", cmd => "perl ./4p_improved -m 1 -s 8.0 $input_file > output_monotone_s8.txt 2>&1", plot => "__do_plot_all_monotone_s8.txt", csv => "__gtk_csv_monotone_s8.TXT"},
+   {name => "Monotone (s=16)", cmd => "perl ./4p_improved -m 1 -s 16.0 $input_file > output_monotone_s16.txt 2>&1", plot => "__do_plot_all_monotone_s16.txt", csv => "__gtk_csv_monotone_s16.TXT"},
+   {name => "Catmull-Rom (t=0.5)", cmd => "perl ./4p_improved -m 2 -t 0.5 $input_file > output_catmull_t05.txt 2>&1", plot => "__do_plot_all_catmull_t05.txt", csv => "__gtk_csv_catmull_t05.TXT"},
+   {name => "Catmull-Rom (t=0.8)", cmd => "perl ./4p_improved -m 2 -t 0.8 $input_file > output_catmull_t08.txt 2>&1", plot => "__do_plot_all_catmull_t08.txt", csv => "__gtk_csv_catmull_t08.TXT"},
    {name => "Limited", cmd => "perl ./4p_improved -m 3 $input_file > output_limited.txt 2>&1", plot => "__do_plot_all_limited.txt", csv => "__gtk_csv_limited.TXT"},
 );
 
@@ -38,9 +41,9 @@ foreach my $method (@methods) {
 # Create combined gnuplot script
 open(my $fh, ">", "compare_all.gnuplot") or die "Cannot create compare_all.gnuplot: $!\n";
 
-print $fh "set terminal png size 1600,1200\n";
+print $fh "set terminal png size 2400,1800\n";
 print $fh "set output 'comparison.png'\n";
-print $fh "set multiplot layout 2,2 title 'Altitude Smoothing Method Comparison'\n\n";
+print $fh "set multiplot layout 3,3 title 'Altitude Smoothing Method Comparison'\n\n";
 
 foreach my $method (@methods) {
    print $fh "# $method->{name}\n";
