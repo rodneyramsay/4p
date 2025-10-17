@@ -11,8 +11,7 @@ getopts('hs:m:t:');
 # 1 = monotone (Fritsch-Carlson) - prevents overshoot
 # 2 = catmull-rom with tension
 # 3 = limited slopes (clamped)
-# 4 = ultra-conservative (strictest overshoot prevention)
-# 5 = guaranteed no-overshoot (mathematical bounds)
+# 4 = guaranteed no-overshoot (mathematical bounds)
 if(defined($opt_m)) {
    $method = $opt_m;
 }
@@ -44,8 +43,7 @@ if(defined($opt_h)) {
    print "                1 = Monotone (Fritsch-Carlson) - prevents overshoot [default]\n";
    print "                2 = Catmull-Rom with tension\n";
    print "                3 = Limited slopes (clamped)\n";
-   print "                4 = Ultra-conservative (strictest overshoot prevention)\n";
-   print "                5 = Guaranteed no-overshoot (mathematical bounds)\n";
+   print "                4 = Guaranteed no-overshoot (mathematical bounds)\n";
    print "  -s <factor>   Smoothing factor (default 4.0)\n";
    print "  -t <tension>  Tension for Catmull-Rom (0.0-1.0, default 0.0)\n";
    print "  -h            Show this help\n";
@@ -170,50 +168,6 @@ sub limited_slope {
       if($slope < $min_slope) { $slope = $min_slope; }
       if($slope > $max_slope) { $slope = $max_slope; }
    }
-   
-   return $slope;
-}
-
-# Ultra-conservative slope calculation (strictest overshoot prevention)
-sub ultra_conservative_slope {
-   my ($slope_left, $slope_mid, $slope_right, $is_start) = @_;
-   
-   my $slope;
-   
-   # Check for sign changes (peaks/valleys) - force flat
-   if($is_start) {
-      if(sign($slope_left) != sign($slope_mid) || $slope_left == 0 || $slope_mid == 0) {
-         return 0;
-      }
-   } else {
-      if(sign($slope_mid) != sign($slope_right) || $slope_mid == 0 || $slope_right == 0) {
-         return 0;
-      }
-   }
-   
-   # Use minimum absolute value (most conservative)
-   if($is_start) {
-      if(abs($slope_left) < abs($slope_mid)) {
-         $slope = $slope_left;
-      } else {
-         $slope = $slope_mid;
-      }
-   } else {
-      if(abs($slope_mid) < abs($slope_right)) {
-         $slope = $slope_mid;
-      } else {
-         $slope = $slope_right;
-      }
-   }
-   
-   # Apply ultra-strict Fritsch-Carlson constraint (2x instead of 3x)
-   my $alpha = abs($slope / $slope_mid);
-   if($alpha > 2.0) {
-      $slope = 2.0 * sign($slope) * abs($slope_mid);
-   }
-   
-   # Additional damping factor to reduce curvature
-   $slope = $slope * 0.7;
    
    return $slope;
 }
@@ -405,16 +359,6 @@ foreach $section (0..$num_sections) {
          }
          
       } elsif($method == 4) {
-         # Ultra-conservative (strictest overshoot prevention)
-         $SL = ultra_conservative_slope($slope_left, $slope_mid, $slope_right, 0);
-         
-         if($section == 0) {
-            $S0 = ultra_conservative_slope($slope_left, $slope_mid, $slope_right, 1);
-         } else {
-            $S0 = $all_geo[$section-1][$trace]{SL};
-         }
-         
-      } elsif($method == 5) {
          # Guaranteed no-overshoot (mathematical bounds)
          $SL = guaranteed_no_overshoot_slope($slope_left, $slope_mid, $slope_right, 0);
          

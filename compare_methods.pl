@@ -18,8 +18,9 @@ print "Comparing smoothing methods for: $input_file\n\n";
 my @methods = (
    {name => "Original", cmd => "perl ./4p $input_file > output_original.txt 2>&1", plot => "__do_plot_all.txt", csv => "__gtk_csv.TXT"},
    {name => "Monotone", cmd => "perl ./4p_improved -m 1 $input_file > output_monotone.txt 2>&1", plot => "__do_plot_all_monotone.txt", csv => "__gtk_csv_monotone.TXT"},
-   {name => "Ultra-Conservative", cmd => "perl ./4p_improved -m 4 $input_file > output_ultra.txt 2>&1", plot => "__do_plot_all_ultra.txt", csv => "__gtk_csv_ultra.TXT"},
+   {name => "Catmull-Rom", cmd => "perl ./4p_improved -m 2 -t 0.3 $input_file > output_catmull.txt 2>&1", plot => "__do_plot_all_catmull.txt", csv => "__gtk_csv_catmull.TXT"},
    {name => "Limited", cmd => "perl ./4p_improved -m 3 $input_file > output_limited.txt 2>&1", plot => "__do_plot_all_limited.txt", csv => "__gtk_csv_limited.TXT"},
+   {name => "Guaranteed-No-Overshoot", cmd => "perl ./4p_improved -m 4 $input_file > output_guaranteed.txt 2>&1", plot => "__do_plot_all_guaranteed.txt", csv => "__gtk_csv_guaranteed.TXT"},
 );
 
 foreach my $method (@methods) {
@@ -38,9 +39,9 @@ foreach my $method (@methods) {
 # Create combined gnuplot script
 open(my $fh, ">", "compare_all.gnuplot") or die "Cannot create compare_all.gnuplot: $!\n";
 
-print $fh "set terminal png size 1600,1200\n";
+print $fh "set terminal png size 2000,1500\n";
 print $fh "set output 'comparison.png'\n";
-print $fh "set multiplot layout 2,2 title 'Altitude Smoothing Method Comparison'\n\n";
+print $fh "set multiplot layout 3,2 title 'Altitude Smoothing Method Comparison'\n\n";
 
 foreach my $method (@methods) {
    print $fh "# $method->{name}\n";
