@@ -11,7 +11,6 @@ getopts('hs:m:t:');
 # 1 = monotone (Fritsch-Carlson) - prevents overshoot
 # 2 = catmull-rom with tension
 # 3 = limited slopes (clamped)
-# 4 = guaranteed no-overshoot (mathematical bounds)
 if(defined($opt_m)) {
    $method = $opt_m;
 }
@@ -43,7 +42,6 @@ if(defined($opt_h)) {
    print "                1 = Monotone (Fritsch-Carlson) - prevents overshoot [default]\n";
    print "                2 = Catmull-Rom with tension\n";
    print "                3 = Limited slopes (clamped)\n";
-   print "                4 = Guaranteed no-overshoot (mathematical bounds)\n";
    print "  -s <factor>   Smoothing factor (default 4.0)\n";
    print "  -t <tension>  Tension for Catmull-Rom (0.0-1.0, default 0.0)\n";
    print "  -h            Show this help\n";
@@ -168,42 +166,6 @@ sub limited_slope {
       if($slope < $min_slope) { $slope = $min_slope; }
       if($slope > $max_slope) { $slope = $max_slope; }
    }
-   
-   return $slope;
-}
-
-# Guaranteed no-overshoot using strict mathematical bounds
-sub guaranteed_no_overshoot_slope {
-   my ($slope_left, $slope_mid, $slope_right, $is_start) = @_;
-   
-   # Check for sign changes (peaks/valleys) - force flat
-   if($is_start) {
-      if(sign($slope_left) != sign($slope_mid) || $slope_left == 0 || $slope_mid == 0) {
-         return 0;
-      }
-   } else {
-      if(sign($slope_mid) != sign($slope_right) || $slope_mid == 0 || $slope_right == 0) {
-         return 0;
-      }
-   }
-   
-   # For guaranteed monotonicity, both slopes must not exceed 1.5x the segment slope
-   # This is the strictest bound that ensures no overshoot
-   my $slope;
-   if($is_start) {
-      $slope = $slope_mid;
-   } else {
-      $slope = $slope_mid;
-   }
-   
-   # Apply strictest Fritsch-Carlson constraint (1.5x)
-   my $alpha = abs($slope / $slope_mid);
-   if($alpha > 1.5) {
-      $slope = 1.5 * sign($slope) * abs($slope_mid);
-   }
-   
-   # Use the segment slope itself (most conservative)
-   $slope = $slope_mid * 0.5;
    
    return $slope;
 }
@@ -354,16 +316,6 @@ foreach $section (0..$num_sections) {
          
          if($section == 0) {
             $S0 = limited_slope($slope_left, $slope_mid, $slope_right, 1);
-         } else {
-            $S0 = $all_geo[$section-1][$trace]{SL};
-         }
-         
-      } elsif($method == 4) {
-         # Guaranteed no-overshoot (mathematical bounds)
-         $SL = guaranteed_no_overshoot_slope($slope_left, $slope_mid, $slope_right, 0);
-         
-         if($section == 0) {
-            $S0 = guaranteed_no_overshoot_slope($slope_left, $slope_mid, $slope_right, 1);
          } else {
             $S0 = $all_geo[$section-1][$trace]{SL};
          }
