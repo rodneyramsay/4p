@@ -47,13 +47,23 @@ foreach my $method (@methods) {
    print $fh "set title '$method->{name}'\n";
    
    if(-f $method->{plot}) {
-      # Read and include the plot commands
+      # Read and include function definitions AND plot commands
       open(my $plot_fh, "<", $method->{plot}) or next;
       my $in_plot = 0;
       while(my $line = <$plot_fh>) {
+         # Include function definitions (lines starting with f_)
+         if($line =~ /^f_/) {
+            print $fh $line;
+         }
+         # Include set xrange
+         if($line =~ /^set xrange/) {
+            print $fh $line;
+         }
+         # Track when we hit plot command
          if($line =~ /^plot/) {
             $in_plot = 1;
          }
+         # Include plot commands but skip pause
          if($in_plot && $line !~ /pause/) {
             print $fh $line;
          }
