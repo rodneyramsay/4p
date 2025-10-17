@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use MATH::Trig;
+use Math::Trig;
 use Math::MatrixLUP;
 use Getopt::Std;
 
