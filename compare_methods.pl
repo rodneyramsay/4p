@@ -14,15 +14,17 @@ unless(-f $input_file) {
 
 print "Comparing smoothing methods for: $input_file\n\n";
 
-# Run each method
+# Run each method with different smoothing factors
 my @methods = (
-   {name => "Original", cmd => "perl ./4p $input_file > output_original.txt 2>&1", plot => "__do_plot_all.txt", csv => "__gtk_csv.TXT"},
-   {name => "Monotone (default)", cmd => "perl ./4p_improved -m 1 $input_file > output_monotone.txt 2>&1", plot => "__do_plot_all_monotone.txt", csv => "__gtk_csv_monotone.TXT"},
+   {name => "Original (s=4)", cmd => "perl ./4p -s 4.0 $input_file > output_original_s4.txt 2>&1", plot => "__do_plot_all_orig_s4.txt", csv => "__gtk_csv_orig_s4.TXT"},
+   {name => "Original (s=8)", cmd => "perl ./4p -s 8.0 $input_file > output_original_s8.txt 2>&1", plot => "__do_plot_all_orig_s8.txt", csv => "__gtk_csv_orig_s8.TXT"},
+   {name => "Original (s=16)", cmd => "perl ./4p -s 16.0 $input_file > output_original_s16.txt 2>&1", plot => "__do_plot_all_orig_s16.txt", csv => "__gtk_csv_orig_s16.TXT"},
+   {name => "Monotone (s=4)", cmd => "perl ./4p_improved -m 1 -s 4.0 $input_file > output_monotone_s4.txt 2>&1", plot => "__do_plot_all_monotone_s4.txt", csv => "__gtk_csv_monotone_s4.TXT"},
    {name => "Monotone (s=8)", cmd => "perl ./4p_improved -m 1 -s 8.0 $input_file > output_monotone_s8.txt 2>&1", plot => "__do_plot_all_monotone_s8.txt", csv => "__gtk_csv_monotone_s8.TXT"},
    {name => "Monotone (s=16)", cmd => "perl ./4p_improved -m 1 -s 16.0 $input_file > output_monotone_s16.txt 2>&1", plot => "__do_plot_all_monotone_s16.txt", csv => "__gtk_csv_monotone_s16.TXT"},
-   {name => "Catmull-Rom (t=0.5)", cmd => "perl ./4p_improved -m 2 -t 0.5 $input_file > output_catmull_t05.txt 2>&1", plot => "__do_plot_all_catmull_t05.txt", csv => "__gtk_csv_catmull_t05.TXT"},
-   {name => "Catmull-Rom (t=0.8)", cmd => "perl ./4p_improved -m 2 -t 0.8 $input_file > output_catmull_t08.txt 2>&1", plot => "__do_plot_all_catmull_t08.txt", csv => "__gtk_csv_catmull_t08.TXT"},
-   {name => "Limited", cmd => "perl ./4p_improved -m 3 $input_file > output_limited.txt 2>&1", plot => "__do_plot_all_limited.txt", csv => "__gtk_csv_limited.TXT"},
+   {name => "Monotone (s=32)", cmd => "perl ./4p_improved -m 1 -s 32.0 $input_file > output_monotone_s32.txt 2>&1", plot => "__do_plot_all_monotone_s32.txt", csv => "__gtk_csv_monotone_s32.TXT"},
+   {name => "Limited (s=4)", cmd => "perl ./4p_improved -m 3 -s 4.0 $input_file > output_limited_s4.txt 2>&1", plot => "__do_plot_all_limited_s4.txt", csv => "__gtk_csv_limited_s4.TXT"},
+   {name => "Limited (s=16)", cmd => "perl ./4p_improved -m 3 -s 16.0 $input_file > output_limited_s16.txt 2>&1", plot => "__do_plot_all_limited_s16.txt", csv => "__gtk_csv_limited_s16.TXT"},
 );
 
 foreach my $method (@methods) {
