@@ -18,7 +18,7 @@ print "Comparing smoothing methods for: $input_file\n\n";
 my @methods = (
    {name => "Original", cmd => "perl ./4p $input_file > output_original.txt 2>&1", plot => "__do_plot_all.txt", csv => "__gtk_csv.TXT"},
    {name => "Monotone", cmd => "perl ./4p_improved -m 1 $input_file > output_monotone.txt 2>&1", plot => "__do_plot_all_monotone.txt", csv => "__gtk_csv_monotone.TXT"},
-   {name => "Catmull-Rom", cmd => "perl ./4p_improved -m 2 -t 0.3 $input_file > output_catmull.txt 2>&1", plot => "__do_plot_all_catmull.txt", csv => "__gtk_csv_catmull.TXT"},
+   {name => "Ultra-Conservative", cmd => "perl ./4p_improved -m 4 $input_file > output_ultra.txt 2>&1", plot => "__do_plot_all_ultra.txt", csv => "__gtk_csv_ultra.TXT"},
    {name => "Limited", cmd => "perl ./4p_improved -m 3 $input_file > output_limited.txt 2>&1", plot => "__do_plot_all_limited.txt", csv => "__gtk_csv_limited.TXT"},
 );
 
