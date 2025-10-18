@@ -51,7 +51,7 @@ print "  ✓ Complete\n\n";
 
 # Method 4: Optimal (new - maximum smoothness, optimal overshoot)
 print "Running Method 4: OPTIMAL (max smoothness, optimal overshoot)...\n";
-system("./4p_optimal $input_file > /dev/null 2>&1");
+system("./4psi -m 4 $input_file > /dev/null 2>&1");
 system("mv __do_plot_all.txt __do_plot_optimal.txt");
 system("mv __gtk_csv.TXT __gtk_csv_optimal.TXT");
 print "  ✓ Complete\n\n";

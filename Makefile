@@ -62,18 +62,14 @@ plots: alt_mytrack.alt
 
 optimal: alt_mytrack.txt
 	@echo "Running OPTIMAL method only..."
-	./4p_optimal $<
+	./4psi -m 4 $<
 	@echo "✓ Done! View __do_plot_all.txt"
 
 # Run a specific method (0-4)
-# Usage: make method1 (or method0, method2, etc.)
+# Usage: make method1 (or method0, method2, method3, method4)
 method%: alt_mytrack.txt
 	@echo "Running method $* on $<..."
-	@if [ "$*" = "4" ]; then \
-		./4p_optimal $<; \
-	else \
-		./4psi -m $* $<; \
-	fi
+	./4psi -m $* $<
 	@echo "✓ Done!" 
 
 # Clean generated files
