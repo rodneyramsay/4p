@@ -23,14 +23,10 @@ print "=" x 70 . "\n\n";
 
 # Method 0: Original (baseline)
 print "Running Method 0: Original (baseline)...\n";
-system("perl 4p $input_file > /dev/null 2>&1");
-if(-e "__do_plot_all.txt") {
-   system("mv __do_plot_all.txt __do_plot_method0.txt");
-   system("mv __gtk_csv.TXT __gtk_csv_method0.TXT");
-   print "  ✓ Complete\n\n";
-} else {
-   print "  ⚠ Skipped (4p failed)\n\n";
-}
+system("./4psi -m 0 $input_file > /dev/null 2>&1");
+system("mv __do_plot_all.txt __do_plot_method0.txt");
+system("mv __gtk_csv.TXT __gtk_csv_method0.TXT");
+print "  ✓ Complete\n\n";
 
 # Method 1: Monotone (Fritsch-Carlson)
 print "Running Method 1: Monotone (no overshoot, less smooth)...\n";
