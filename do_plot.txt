@@ -4,9 +4,9 @@ f(x) = a*x**3 + b*x**2 + c*x + d
 
 fit f(x) '__data.txt' via a,b,c,d
 
-#plot '__data.txt', f(x)
+plot '__data.txt', f(x)
 
-#pause -1
+pause -1
 
 
 

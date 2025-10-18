@@ -72,7 +72,7 @@ method%: alt_mytrack.txt
 	@if [ "$*" = "4" ]; then \
 		./4p_optimal $<; \
 	else \
-		./4p_improved -m $* $<; \
+		./4psi -m $* $<; \
 	fi
 	@echo "✓ Done!" 
 

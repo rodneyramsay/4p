@@ -13,7 +13,7 @@ Create GPL track editing altitude trace equation coefficients. Each equation is 
 ./4p_optimal alt_mytrack.txt
 
 # Alternative: Monotone method (C¹ continuity, no overshoot)
-./4p_improved -m 1 alt_mytrack.txt
+./4psi -m 1 alt_mytrack.txt
 
 # Generate all comparison plots
 ./generate_all_plots.pl alt_mytrack.txt

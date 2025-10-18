@@ -34,21 +34,21 @@ if(-e "__do_plot_all.txt") {
 
 # Method 1: Monotone (Fritsch-Carlson)
 print "Running Method 1: Monotone (no overshoot, less smooth)...\n";
-system("./4p_improved -m 1 $input_file > /dev/null 2>&1");
+system("./4psi -m 1 $input_file > /dev/null 2>&1");
 system("mv __do_plot_all.txt __do_plot_method1.txt");
 system("mv __gtk_csv.TXT __gtk_csv_method1.TXT");
 print "  ✓ Complete\n\n";
 
 # Method 2: Catmull-Rom (tension = 0.3)
 print "Running Method 2: Catmull-Rom (tension=0.3)...\n";
-system("./4p_improved -m 2 -t 0.3 $input_file > /dev/null 2>&1");
+system("./4psi -m 2 -t 0.3 $input_file > /dev/null 2>&1");
 system("mv __do_plot_all.txt __do_plot_method2.txt");
 system("mv __gtk_csv.TXT __gtk_csv_method2.TXT");
 print "  ✓ Complete\n\n";
 
 # Method 3: Limited slopes
 print "Running Method 3: Limited slopes...\n";
-system("./4p_improved -m 3 $input_file > /dev/null 2>&1");
+system("./4psi -m 3 $input_file > /dev/null 2>&1");
 system("mv __do_plot_all.txt __do_plot_method3.txt");
 system("mv __gtk_csv.TXT __gtk_csv_method3.TXT");
 print "  ✓ Complete\n\n";

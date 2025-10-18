@@ -12,7 +12,7 @@ The **optimal algorithm** (`4p_optimal`) solves the fundamental trade-off betwee
 ## The Problem
 
 - **Old algorithm (`4p`)**: Too much overshoot → unrealistic peaks/valleys
-- **Monotone algorithm (`4p_improved -m 1`)**: No overshoot but not smooth enough → visible "kinks"
+- **Monotone algorithm (`4psi -m 1`)**: No overshoot but not smooth enough → visible "kinks"
 - **Goal**: Maximum smoothness while eliminating overshoot
 
 ## Key Innovation: Adaptive Constraint System
