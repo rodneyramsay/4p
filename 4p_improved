@@ -98,33 +98,30 @@ sub monotone_slope {
       if(sign($slope_left) != sign($slope_mid) || $slope_left == 0 || $slope_mid == 0) {
          $slope = 0;
       } else {
-         # Harmonic mean weighted by segment lengths
-         my $w1 = 2.0;
-         my $w2 = 1.0;
-         $slope = ($w1 + $w2) / ($w1/$slope_left + $w2/$slope_mid);
+         # Simple average for smoother transitions
+         $slope = ($slope_left + $slope_mid) / 2.0;
       }
    } else {
       # For end of section, use mid and right slopes
       if(sign($slope_mid) != sign($slope_right) || $slope_mid == 0 || $slope_right == 0) {
          $slope = 0;
       } else {
-         # Harmonic mean weighted by segment lengths
-         my $w1 = 1.0;
-         my $w2 = 2.0;
-         $slope = ($w1 + $w2) / ($w1/$slope_mid + $w2/$slope_right);
+         # Simple average for smoother transitions
+         $slope = ($slope_mid + $slope_right) / 2.0;
       }
    }
    
-   # Apply Fritsch-Carlson constraint to prevent overshoot
+   # Apply mild Fritsch-Carlson constraint to prevent severe overshoot
+   # Use a higher threshold (5.0 instead of 3.0) for smoother curves
    if($is_start) {
       my $alpha = abs($slope / $slope_mid);
-      if($alpha > 3.0) {
-         $slope = 3.0 * sign($slope) * abs($slope_mid);
+      if($alpha > 5.0) {
+         $slope = 5.0 * sign($slope) * abs($slope_mid);
       }
    } else {
       my $alpha = abs($slope / $slope_mid);
-      if($alpha > 3.0) {
-         $slope = 3.0 * sign($slope) * abs($slope_mid);
+      if($alpha > 5.0) {
+         $slope = 5.0 * sign($slope) * abs($slope_mid);
       }
    }
    
