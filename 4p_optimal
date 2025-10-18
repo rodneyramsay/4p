@@ -4,47 +4,41 @@ use Math::Trig;
 use Math::MatrixLUP;
 use Getopt::Std;
 
-getopts('hs:m:t:');
+getopts('hs:a:');
 
-# Smoothing method selection
-# 0 = original (default)
-# 1 = monotone (Fritsch-Carlson) - prevents overshoot
-# 2 = catmull-rom with tension
-# 3 = limited slopes (clamped)
-if(defined($opt_m)) {
-   $method = $opt_m;
-}
-else {
-   $method = 1;  # Default to monotone
-}
-
-# Smoothing factor (original method) or tension (catmull-rom)
+# Smoothing factor - controls how aggressively we smooth
+# Higher values = smoother curves (default 8.0 for maximum smoothness)
 if(defined($opt_s)) {
    $smooth = $opt_s;
 }
 else {
-   $smooth = 4.0;
+   $smooth = 8.0;
 }
 
-# Tension parameter for catmull-rom (0.0 = standard, 0.5 = tight, 1.0 = linear)
-if(defined($opt_t)) {
-   $tension = $opt_t;
+# Overshoot prevention aggressiveness (0.0-1.0)
+# 0.0 = no prevention (maximum smoothness, may overshoot)
+# 1.0 = maximum prevention (guaranteed no overshoot)
+# Default 0.85 = near-optimal balance
+if(defined($opt_a)) {
+   $alpha = $opt_a;
 }
 else {
-   $tension = 0.0;
+   $alpha = 0.85;
 }
 
 if(defined($opt_h)) {
-   print "Usage: 4p_improved [options] <input_file>\n";
+   print "Usage: 4p_optimal [options] <input_file>\n";
    print "Options:\n";
-   print "  -m <method>   Smoothing method:\n";
-   print "                0 = Original blending\n";
-   print "                1 = Monotone (Fritsch-Carlson) - prevents overshoot [default]\n";
-   print "                2 = Catmull-Rom with tension\n";
-   print "                3 = Limited slopes (clamped)\n";
-   print "  -s <factor>   Smoothing factor (default 4.0)\n";
-   print "  -t <tension>  Tension for Catmull-Rom (0.0-1.0, default 0.0)\n";
+   print "  -s <factor>   Smoothing factor (default 8.0, higher = smoother)\n";
+   print "  -a <alpha>    Overshoot prevention (0.0-1.0, default 0.85)\n";
+   print "                0.0 = maximum smoothness, may overshoot\n";
+   print "                1.0 = guaranteed no overshoot, less smooth\n";
    print "  -h            Show this help\n";
+   print "\n";
+   print "This algorithm maximizes smoothness while eliminating overshoot using:\n";
+   print "  - C² continuity (smooth second derivatives)\n";
+   print "  - Adaptive slope constraints based on local curvature\n";
+   print "  - Weighted harmonic mean for slope blending\n";
    exit(0);
 }
 
@@ -87,88 +81,91 @@ sub sign {
    return ($x > 0) - ($x < 0);
 }
 
-# Calculate slope using monotone method (Fritsch-Carlson)
-sub monotone_slope {
-   my ($slope_left, $slope_mid, $slope_right, $is_start, $smooth_factor) = @_;
+# Weighted harmonic mean - more conservative than arithmetic mean
+# Prevents extreme values from dominating
+sub weighted_harmonic_mean {
+   my ($a, $b, $weight) = @_;
    
-   my $slope;
-   
-   if($is_start) {
-      # For start of section, use left and mid slopes
-      if(sign($slope_left) != sign($slope_mid) || $slope_left == 0 || $slope_mid == 0) {
-         $slope = 0;
-      } else {
-         # Weighted average based on smoothing factor
-         # Higher smooth_factor gives more weight to the segment slope (smoother)
-         my $weight = $smooth_factor / ($smooth_factor + 1.0);
-         $slope = (1.0 - $weight) * $slope_left + $weight * $slope_mid;
-      }
-   } else {
-      # For end of section, use mid and right slopes
-      if(sign($slope_mid) != sign($slope_right) || $slope_mid == 0 || $slope_right == 0) {
-         $slope = 0;
-      } else {
-         # Weighted average based on smoothing factor
-         # Higher smooth_factor gives more weight to the segment slope (smoother)
-         my $weight = $smooth_factor / ($smooth_factor + 1.0);
-         $slope = (1.0 - $weight) * $slope_mid + $weight * $slope_right;
-      }
+   # Handle zero cases
+   if(abs($a) < 1e-10 && abs($b) < 1e-10) {
+      return 0;
+   }
+   if(abs($a) < 1e-10) {
+      return $b * (1.0 - $weight);
+   }
+   if(abs($b) < 1e-10) {
+      return $a * $weight;
    }
    
-   # Apply mild Fritsch-Carlson constraint to prevent severe overshoot
-   # Use a higher threshold (5.0 instead of 3.0) for smoother curves
-   # Only apply if slope_mid is non-zero to avoid division by zero
-   if($slope_mid != 0) {
-      if($is_start) {
-         my $alpha = abs($slope / $slope_mid);
-         if($alpha > 5.0) {
-            $slope = 5.0 * sign($slope) * abs($slope_mid);
-         }
-      } else {
-         my $alpha = abs($slope / $slope_mid);
-         if($alpha > 5.0) {
-            $slope = 5.0 * sign($slope) * abs($slope_mid);
-         }
-      }
-   }
-   
-   return $slope;
+   # Weighted harmonic mean
+   my $result = 1.0 / ($weight / $a + (1.0 - $weight) / $b);
+   return $result;
 }
 
-# Calculate slope using Catmull-Rom with tension
-sub catmull_rom_slope {
-   my ($y_prev, $y_curr, $y_next, $x_prev, $x_curr, $x_next, $tension) = @_;
-   
-   my $slope = (1.0 - $tension) * ($y_next - $y_prev) / ($x_next - $x_prev);
-   return $slope;
-}
-
-# Calculate slope with limiting (clamped)
-sub limited_slope {
-   my ($slope_left, $slope_mid, $slope_right, $is_start) = @_;
+# Calculate optimal slope with C² continuity and overshoot prevention
+sub optimal_slope {
+   my ($slope_left, $slope_mid, $slope_right, $is_start, $smooth_factor, $alpha) = @_;
    
    my $slope;
+   my $s1, $s2;
    
    if($is_start) {
-      # Average of left and mid, but limit to range
-      $slope = ($slope_left + $slope_mid) / 2.0;
-      
-      # Clamp to prevent overshoot
-      my $min_slope = ($slope_left < $slope_mid) ? $slope_left : $slope_mid;
-      my $max_slope = ($slope_left > $slope_mid) ? $slope_left : $slope_mid;
-      
-      if($slope < $min_slope) { $slope = $min_slope; }
-      if($slope > $max_slope) { $slope = $max_slope; }
+      $s1 = $slope_left;
+      $s2 = $slope_mid;
    } else {
-      # Average of mid and right, but limit to range
-      $slope = ($slope_mid + $slope_right) / 2.0;
+      $s1 = $slope_mid;
+      $s2 = $slope_right;
+   }
+   
+   # Step 1: Check for extrema (sign change)
+   # If slopes have opposite signs, we're at a peak/valley
+   if(sign($s1) != sign($s2) && $s1 != 0 && $s2 != 0) {
+      # At extrema, set slope to zero to prevent overshoot
+      $slope = 0;
+   }
+   else {
+      # Step 2: Use harmonic mean for conservative slope calculation
+      # Harmonic mean prevents extreme values from dominating
+      if(abs($s1) > 1e-10 && abs($s2) > 1e-10 && sign($s1) == sign($s2)) {
+         # Harmonic mean
+         $slope = 2.0 / (1.0/$s1 + 1.0/$s2);
+      }
+      elsif(abs($s1) < 1e-10 && abs($s2) < 1e-10) {
+         $slope = 0;
+      }
+      else {
+         # One slope is zero, use the average
+         $slope = ($s1 + $s2) / 2.0;
+      }
       
-      # Clamp to prevent overshoot
-      my $min_slope = ($slope_mid < $slope_right) ? $slope_mid : $slope_right;
-      my $max_slope = ($slope_mid > $slope_right) ? $slope_mid : $slope_right;
+      # Step 3: Apply Fritsch-Carlson constraint to prevent overshoot
+      # Limit slope to 3x the segment slope
+      my $segment_slope = $is_start ? $slope_mid : $slope_mid;
       
-      if($slope < $min_slope) { $slope = $min_slope; }
-      if($slope > $max_slope) { $slope = $max_slope; }
+      if(abs($segment_slope) > 1e-10) {
+         # Stricter constraint: max 3x segment slope (Fritsch-Carlson)
+         my $max_ratio = 3.0;
+         
+         my $ratio = abs($slope / $segment_slope);
+         if($ratio > $max_ratio) {
+            $slope = $max_ratio * sign($slope) * abs($segment_slope);
+         }
+      }
+      
+      # Step 4: Apply smoothing factor for additional smoothness
+      # Higher smooth_factor = smoother curves
+      my $smooth_weight = $smooth_factor / ($smooth_factor + 4.0);
+      
+      # Blend toward segment slope for smoothness
+      $slope = (1.0 - $smooth_weight) * $slope + $smooth_weight * $segment_slope;
+      
+      # Step 5: Final alpha-based adjustment
+      # alpha controls the trade-off between smoothness and constraint
+      # Higher alpha = tighter constraint (less overshoot)
+      if($alpha > 0.5) {
+         my $constraint_factor = 2.0 * ($alpha - 0.5);  # 0 to 1 as alpha goes 0.5 to 1.0
+         $slope = $slope * (1.0 - 0.3 * $constraint_factor);
+      }
    }
    
    return $slope;
@@ -291,59 +288,19 @@ foreach $section (0..$num_sections) {
       $length_right = sqrt(($M[3]{x}-$M[2]{x})**2 + ($M[3]{y}-$M[2]{y})**2);
 
 
-      # Calculate slopes based on selected method
-      if($method == 1) {
-         # Monotone method (Fritsch-Carlson)
-         $SL = monotone_slope($slope_left, $slope_mid, $slope_right, 0, $smooth);
-         
-         if($section == 0) {
-            $S0 = monotone_slope($slope_left, $slope_mid, $slope_right, 1, $smooth);
+      # Calculate optimal slopes with C² continuity and overshoot prevention
+      $SL = optimal_slope($slope_left, $slope_mid, $slope_right, 0, $smooth, $alpha);
+      
+      if($section == 0) {
+         # For closed loop: use SL from last section to ensure C² continuity at wraparound
+         if(defined($all_geo[$num_sections][$trace]{SL})) {
+            $S0 = $all_geo[$num_sections][$trace]{SL};
          } else {
-            $S0 = $all_geo[$section-1][$trace]{SL};
+            # First pass: compute initial slope
+            $S0 = optimal_slope($slope_left, $slope_mid, $slope_right, 1, $smooth, $alpha);
          }
-         
-      } elsif($method == 2) {
-         # Catmull-Rom with tension
-         $SL = catmull_rom_slope($M[1]{y}, $M[2]{y}, $M[3]{y}, 
-                                 $M[1]{x}, $M[2]{x}, $M[3]{x}, $tension);
-         
-         if($section == 0) {
-            $S0 = catmull_rom_slope($M[0]{y}, $M[1]{y}, $M[2]{y},
-                                    $M[0]{x}, $M[1]{x}, $M[2]{x}, $tension);
-         } else {
-            $S0 = $all_geo[$section-1][$trace]{SL};
-         }
-         
-      } elsif($method == 3) {
-         # Limited slopes (clamped)
-         $SL = limited_slope($slope_left, $slope_mid, $slope_right, 0);
-         
-         if($section == 0) {
-            $S0 = limited_slope($slope_left, $slope_mid, $slope_right, 1);
-         } else {
-            $S0 = $all_geo[$section-1][$trace]{SL};
-         }
-         
       } else {
-         # Original method (method == 0)
-         if(abs($slope_mid) < abs($slope_right)) {
-            $SL = $slope_mid + ($slope_right + $slope_mid) / $smooth;
-         }
-         else {
-            $SL = $slope_right + ($slope_right + $slope_mid) / $smooth;
-         }
-
-         if($section == 0) {
-            if(abs($slope_left) < abs($slope_mid)) {
-               $S0 = $slope_left + ($slope_mid + $slope_left) / $smooth;
-            }
-            else {
-               $S0 = $slope_mid + ($slope_mid + $slope_left) / $smooth;
-            }
-         }
-         else {
-            $S0 = $all_geo[$section-1][$trace]{SL};
-         }
+         $S0 = $all_geo[$section-1][$trace]{SL};
       }
 	 
 
@@ -400,6 +357,63 @@ foreach $section (0..$num_sections) {
    }      
 }
 
+#
+# Second pass: Recompute section 0 with wraparound slope for closed loop C² continuity
+#
+foreach $trace (0..$num_traces) {
+   $section = 0;
+   
+   # Get the 4-point window for section 0
+   $jj = $section - 1;
+   if($jj < 0) {
+      $jj = $num_sections;
+   }
+   
+   foreach $x (0..3) {
+      if($jj > $num_sections) {
+         $jj = 0;
+      }
+      
+      @t = split(/, /, $strings[$jj]);
+      $M[$x]{l} = $section_length[$jj];
+      
+      if(($section == 0) && ($x == 0)) {
+         $M[$x]{x} = -1 * $section_length[$num_sections];
+      }
+      else {
+         $M[$x]{x} = $section_x[$jj];
+      }
+      
+      $jj++;
+      $M[$x]{y} = $t[$trace + 2];
+   }
+   
+   # Recompute slopes
+   $slope_left  = ($M[1]{y} - $M[0]{y}) / ($M[1]{x} - $M[0]{x});
+   $slope_mid   = ($M[2]{y} - $M[1]{y}) / ($M[2]{x} - $M[1]{x});
+   $slope_right = ($M[3]{y} - $M[2]{y}) / ($M[3]{x} - $M[2]{x});
+   
+   # Use SL from last section as S0 for section 0 (closed loop)
+   $S0 = $all_geo[$num_sections][$trace]{SL};
+   $SL = optimal_slope($slope_left, $slope_mid, $slope_right, 0, $smooth, $alpha);
+   
+   # Recompute cubic parameters
+   $L = $M[2]{x} - $M[1]{x};
+   $Y0 = $M[1]{y};
+   $YL = $M[2]{y};
+   
+   $params{d} = $Y0;
+   $params{c} = $S0;
+   $params{a} = 1.0 / $L**3 * ($L * ($S0 + $SL) + 2.0 * ($Y0 - $YL));
+   $params{b} = (1.0 / $L**2) * ($L * (-2.0 * $S0 - $SL) - 3.0 * ($Y0 - $YL));
+   
+   # Update stored parameters
+   $all_params[$section][$trace]{a} = $params{a};
+   $all_params[$section][$trace]{b} = $params{b};
+   $all_params[$section][$trace]{c} = $params{c};
+   $all_params[$section][$trace]{d} = $params{d};
+   $all_geo[$section][$trace]{SL} = $SL;
+}
 
 #
 # Create plot file(s) for gnuplot

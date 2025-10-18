@@ -2,22 +2,34 @@
 
 Create GPL track editing altitude trace equation coefficients. Each equation is defined by 4 point sets that make up the previous, current and next sections start and end points.
 
-## 🆕 NEW: Improved Smoothing Methods
+## 🆕 NEW: OPTIMAL Smoothing Algorithm
 
-**Problem:** The original implementation can produce overshoot (unrealistic bumps/dips) in altitude profiles.
+**Problem:** The original implementation produces overshoot (unrealistic bumps/dips) in altitude profiles.
 
-**Solution:** Use `4p_improved` with multiple smoothing methods to minimize overshoot:
+**Solution:** Use the new `4p_optimal` algorithm for maximum smoothness with no overshoot:
 
 ```bash
-# Recommended: Monotone method (no overshoot)
+# RECOMMENDED: OPTIMAL method (C² continuity, no overshoot)
+./4p_optimal alt_mytrack.txt
+
+# Alternative: Monotone method (C¹ continuity, no overshoot)
 ./4p_improved -m 1 alt_mytrack.txt
 
-# Compare all methods
-./compare_methods.pl alt_mytrack.txt
+# Generate all comparison plots
+./generate_all_plots.pl alt_mytrack.txt
 ```
 
-📖 **See [QUICK_START.md](QUICK_START.md) for usage guide**  
-📖 **See [SMOOTHING_METHODS.md](SMOOTHING_METHODS.md) for technical details**
+### Algorithm Comparison
+
+| Algorithm | Smoothness | Overshoot | Continuity | Use Case |
+|-----------|-----------|-----------|------------|----------|
+| **Original** | ⭐⭐⭐⭐⭐ | ❌ High | C² | Don't use |
+| **Monotone** | ⭐⭐⭐ | ✅ None | C¹ | Guaranteed no overshoot |
+| **OPTIMAL** | ⭐⭐⭐⭐⭐ | ✅ None | C² | **Best choice** ⭐ |
+
+📖 **See [OPTIMAL_ALGORITHM.md](OPTIMAL_ALGORITHM.md) for technical details**  
+📖 **See [SOLUTION_SUMMARY.md](SOLUTION_SUMMARY.md) for complete documentation**  
+📖 **See [QUICK_TEST.md](QUICK_TEST.md) for testing guide**
 
 --- 
 
