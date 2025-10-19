@@ -82,23 +82,23 @@ At the start of Section 2 (which is position $t$ in the original):
 
 $$Y_0^{(2)} = f_0(t) = A_0 t^3 + B_0 t^2 + C_0 t + D_0$$
 
-$$S_0^{(2)} = f_0'(t) = 3A_0 t^2 + 2B_0 t + C_0$$
+$$S_{2(0)} = f_0'(t) = 3A_0 t^2 + 2B_0 t + C_0$$
 
 At the end of Section 2 (which is position $L$ in the original):
 
 $$Y_L^{(2)} = f_0(L) = A_0 L^3 + B_0 L^2 + C_0 L + D_0$$
 
-$$S_L^{(2)} = f_0'(L) = 3A_0 L^2 + 2B_0 L + C_0$$
+$$S_{2(L)} = f_0'(L) = 3A_0 L^2 + 2B_0 L + C_0$$
 
 ### Section 2 Coefficients
 
 Using the standard cubic spline formulas with length $L_2 = L - t$:
 
-$$A_2 = \frac{1}{L_2^3} [L_2(S_0^{(2)} + S_L^{(2)}) + 2(Y_0^{(2)} - Y_L^{(2)})]$$
+$$A_2 = \frac{1}{L_2^3} [L_2(S_{2(0)} + S_{2(L)}) + 2(Y_0^{(2)} - Y_L^{(2)})]$$
 
-$$B_2 = \frac{1}{L_2^2} [L_2(-2S_0^{(2)} - S_L^{(2)}) - 3(Y_0^{(2)} - Y_L^{(2)})]$$
+$$B_2 = \frac{1}{L_2^2} [L_2(-2S_{2(0)} - S_{2(L)}) - 3(Y_0^{(2)} - Y_L^{(2)})]$$
 
-$$C_2 = S_0^{(2)} = 3A_0 t^2 + 2B_0 t + C_0$$
+$$C_2 = S_{2(0)} = 3A_0 t^2 + 2B_0 t + C_0$$
 
 $$D_2 = Y_0^{(2)} = A_0 t^3 + B_0 t^2 + C_0 t + D_0$$
 
@@ -106,11 +106,11 @@ $$D_2 = Y_0^{(2)} = A_0 t^3 + B_0 t^2 + C_0 t + D_0$$
 
 Let $L_2 = L - t$. We need to calculate:
 
-$$A_2 = \frac{1}{L_2^3} [L_2(S_0^{(2)} + S_L^{(2)}) + 2(Y_0^{(2)} - Y_L^{(2)})]$$
+$$A_2 = \frac{1}{L_2^3} [L_2(S_{2(0)} + S_{2(L)}) + 2(Y_0^{(2)} - Y_L^{(2)})]$$
 
 Substituting:
-- $S_0^{(2)} = 3A_0 t^2 + 2B_0 t + C_0$
-- $S_L^{(2)} = 3A_0 L^2 + 2B_0 L + C_0$
+- $S_{2(0)}  = 3A_0 t^2 + 2B_0 t + C_0$
+- $S_{2(L)} = 3A_0 L^2 + 2B_0 L + C_0$
 - $Y_0^{(2)} = A_0 t^3 + B_0 t^2 + C_0 t + D_0$
 - $Y_L^{(2)} = A_0 L^3 + B_0 L^2 + C_0 L + D_0$
 
@@ -120,7 +120,7 @@ $$A_2 = \frac{1}{L_2^3} [L_2(3A_0(t^2 + L^2) + 2B_0(t + L) + 2C_0) + 2A_0(t^3 - 
 
 Similarly for $B_2$:
 
-$$B_2 = \frac{1}{L_2^2} [L_2(-2S_0^{(2)} - S_L^{(2)}) - 3(Y_0^{(2)} - Y_L^{(2)})]$$
+$$B_2 = \frac{1}{L_2^2} [L_2(-2S_{2(0)} - S_{2(L)}) - 3(Y_0^{(2)} - Y_L^{(2)})]$$
 
 $$B_2 = \frac{1}{L_2^2} [L_2(-2(3A_0 t^2 + 2B_0 t + C_0) - (3A_0 L^2 + 2B_0 L + C_0)) - 3(A_0 t^3 + B_0 t^2 + C_0 t - A_0 L^3 - B_0 L^2 - C_0 L)]$$
 
@@ -132,9 +132,9 @@ $$\boxed{C_2 = 3A_0 t^2 + 2B_0 t + C_0}$$
 
 $$\boxed{D_2 = A_0 t^3 + B_0 t^2 + C_0 t + D_0}$$
 
-$$\boxed{A_2 = \frac{1}{L_2^3} [L_2(S_0^{(2)} + S_L^{(2)}) + 2(Y_0^{(2)} - Y_L^{(2)})]}$$
+$$\boxed{A_2 = \frac{1}{L_2^3} [L_2(S_{2(0)} + S_{2(L)}) + 2(Y_0^{(2)} - Y_L^{(2)})]}$$
 
-$$\boxed{B_2 = \frac{1}{L_2^2} [L_2(-2S_0^{(2)} - S_L^{(2)}) - 3(Y_0^{(2)} - Y_L^{(2)})]}$$
+$$\boxed{B_2 = \frac{1}{L_2^2} [L_2(-2S_{2(0)} - S_{2(L)}) - 3(Y_0^{(2)} - Y_L^{(2)})]}$$
 
 Where the values are substituted from above.
 
@@ -157,8 +157,8 @@ $$\boxed{
 \begin{align}
 C_2 &= 3A_0 t^2 + 2B_0 t + C_0 \\
 D_2 &= A_0 t^3 + B_0 t^2 + C_0 t + D_0 \\
-A_2 &= \frac{1}{L_2^3} [L_2(S_0^{(2)} + S_L^{(2)}) + 2(Y_0^{(2)} - Y_L^{(2)})] \\
-B_2 &= \frac{1}{L_2^2} [L_2(-2S_0^{(2)} - S_L^{(2)}) - 3(Y_0^{(2)} - Y_L^{(2)})]
+A_2 &= \frac{1}{L_2^3} [L_2(S_{2(0)} + S_{2(L)}) + 2(Y_0^{(2)} - Y_L^{(2)})] \\
+B_2 &= \frac{1}{L_2^2} [L_2(-2S_{2(0)} - S_{2(L)}) - 3(Y_0^{(2)} - Y_L^{(2)})]
 \end{align}
 }$$
 
@@ -187,8 +187,8 @@ Expanding and simplifying shows this equals $f_0(L)$ ✓
 
 2. **Section 2** requires recalculating all four coefficients using the standard cubic spline formulas with:
    - New length: $L_2 = L - t$
-   - Start position/slope: $Y_0^{(2)}, S_0^{(2)}$ from original function at $x = t$
-   - End position/slope: $Y_L^{(2)}, S_L^{(2)}$ from original function at $x = L$
+   - Start position/slope: $Y_0^{(2)}, S_{20)}$ from original function at $x = t$
+   - End position/slope: $Y_L^{(2)}, S_{2(L)}$ from original function at $x = L$
 
 3. The coefficients $C_2$ and $D_2$ have simple closed forms (derivative and value at split point), but $A_2$ and $B_2$ must be computed using the full cubic spline formulas.
 
