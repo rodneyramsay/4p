@@ -73,7 +73,8 @@ clean:
 	-rm -f __do_plot_*.txt
 	-rm -f __gtk_csv*.TXT
 	-rm -f output_*.txt
-	-rm -f *.png
+	-rm zoom_junction2.png
+	-rm zoom_transition.png
 	-rm -f *.gnuplot
 	-rm -f *.alt
 	@echo "Clean complete."
