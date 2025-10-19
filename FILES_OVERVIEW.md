@@ -1,52 +1,50 @@
-# 4p Project Files Overview
+# 4psi Project Files Overview
 
-## Core Programs
+## Core Program
 
-### `4p` (Original)
+### `4psi`
 - **Type:** Perl script
-- **Purpose:** Original altitude equation generator
-- **Usage:** `./4p <input_file>`
-- **Method:** Simple slope blending (can overshoot)
-- **Status:** Preserved for backward compatibility
-
-### `4p_improved` ⭐ NEW
-- **Type:** Perl script
-- **Purpose:** Enhanced altitude equation generator with multiple smoothing methods
-- **Usage:** `./4p_improved -m <method> [options] <input_file>`
+- **Purpose:** GPL Track Altitude Equation Generator with multiple smoothing methods
+- **Usage:** `./4psi -m <method> [options] <input_file>`
 - **Methods:**
-  - `-m 0`: Original (baseline)
-  - `-m 1`: Monotone (Fritsch-Carlson) - **RECOMMENDED**
+  - `-m 0`: Original blending
+  - `-m 1`: Monotone (Fritsch-Carlson)
   - `-m 2`: Catmull-Rom with tension
   - `-m 3`: Limited slopes (clamped)
+  - `-m 4`: OPTIMAL - **RECOMMENDED**
 - **Options:**
-  - `-s <factor>`: Smoothing factor (default 4.0)
-  - `-t <tension>`: Tension for Catmull-Rom (0.0-1.0)
+  - `-s <factor>`: Smoothing factor (default 4.0, 8.0 for method 4)
+  - `-t <value>`: Tension (method 2) or alpha (method 4, default 0.85)
   - `-h`: Help
 
 ### `4p_1eq`
-- **Type:** Perl script (existing)
-- **Purpose:** Single equation variant
-- **Status:** Original file, not modified
+- **Type:** Perl script
+- **Purpose:** Legacy single equation variant
+- **Status:** Preserved for compatibility
 
 ---
 
 ## Helper Scripts
 
-### `compare_methods.pl` ⭐ NEW
+### `generate_all_plots.pl`
 - **Type:** Perl script
-- **Purpose:** Compare all smoothing methods visually
-- **Usage:** `./compare_methods.pl <input_file>`
+- **Purpose:** Generate comparison plots for all smoothing methods
+- **Usage:** `./generate_all_plots.pl <input_file>`
 - **Output:**
-  - Runs all 4 methods
-  - Generates comparison plots
-  - Creates `compare_all.gnuplot` script
-  - Produces `comparison.png` when run with gnuplot
+  - Runs all 5 methods
+  - Generates individual plot scripts
+  - Creates comparison visualizations
 
-### `test_monotone.sh` ⭐ NEW
-- **Type:** Bash script
-- **Purpose:** Quick test of recommended monotone method
-- **Usage:** `./test_monotone.sh [input_file]`
-- **Default:** Uses `alt_mytrack.txt` if no file specified
+### `compare_optimal.pl`
+- **Type:** Perl script
+- **Purpose:** Compare OPTIMAL method with other methods
+- **Usage:** `./compare_optimal.pl <input_file>`
+
+### `split_section_test.pl`
+- **Type:** Perl script
+- **Purpose:** Test cubic spline section splitting algorithm
+- **Usage:** `perl split_section_test.pl`
+- **Output:** Demonstrates C⁰ and C¹ continuity preservation
 
 ### `x_kml`
 - **Type:** Executable (existing)
@@ -57,56 +55,67 @@
 
 ## Documentation
 
-### `README.md` (Updated)
+### `README.md`
 - **Purpose:** Main project documentation
 - **Content:**
   - Project overview
-  - NEW: Section on improved smoothing methods
+  - OPTIMAL smoothing algorithm
+  - Section splitting test
   - Input format specification
   - Mathematical equations
   - Links to detailed guides
 
-### `QUICK_START.md` ⭐ NEW
-- **Purpose:** User-friendly getting started guide
+### `4PSI_USER_GUIDE.md`
+- **Purpose:** Comprehensive user guide
 - **Content:**
-  - TL;DR quick commands
-  - Method comparison table
-  - Step-by-step usage
-  - Command reference
+  - Complete command reference
+  - All 5 smoothing methods explained
+  - Examples and use cases
+  - Troubleshooting guide
+- **Audience:** All users
+
+### `QUICK_START.md`
+- **Purpose:** Quick getting started guide
+- **Content:**
+  - Quick commands
+  - Method comparison
+  - Common use cases
   - Troubleshooting
 - **Audience:** Users who want to get started quickly
 
-### `SMOOTHING_METHODS.md` ⭐ NEW
-- **Purpose:** Technical documentation of smoothing methods
+### `OPTIMAL_ALGORITHM.md`
+- **Purpose:** Technical documentation of OPTIMAL method (method 4)
+- **Content:**
+  - Algorithm details
+  - Mathematical background
+  - Implementation notes
+- **Audience:** Technical users
+
+### `SMOOTHING_METHODS.md`
+- **Purpose:** Technical documentation of all smoothing methods
 - **Content:**
   - Detailed explanation of each method
   - Algorithm descriptions
   - Pros/cons comparison
-  - When to use each method
-  - Technical references
 - **Audience:** Users who want to understand the algorithms
 
-### `OVERSHOOT_EXPLAINED.md` ⭐ NEW
+### `OVERSHOOT_EXPLAINED.md`
 - **Purpose:** Visual explanation of overshoot problem
 - **Content:**
-  - ASCII art diagrams
-  - Real-world examples
+  - Diagrams and examples
   - Visual comparisons
-  - Decision trees
   - Testing methods
-- **Audience:** Users who want to understand the problem visually
+- **Audience:** Users who want to understand the problem
 
-### `IMPROVEMENTS_SUMMARY.md` ⭐ NEW
-- **Purpose:** Complete technical summary of improvements
+### `SOLUTION_SUMMARY.md`
+- **Purpose:** Complete technical summary
 - **Content:**
-  - What was changed and why
   - Algorithm details
   - Performance comparison
   - Mathematical background
-  - References
 - **Audience:** Technical users and developers
 
-### `FILES_OVERVIEW.md` ⭐ NEW (This file)
+### `FILES_OVERVIEW.md` (This file)
 - **Purpose:** Index of all project files
 - **Content:** You're reading it!
 
@@ -148,27 +157,23 @@
 ## Output Files (Generated)
 
 ### `__gtk_csv.TXT`
-- **Generated by:** All 4p variants
+- **Generated by:** 4psi
 - **Format:** CSV
 - **Content:** Altitude equation coefficients for GPL track editor
 - **Structure:** `section, length_tics, d, a, b, c, gradient_angle` (per trace)
 - **Usage:** Import into GPL track editor
 
 ### `__do_plot_all.txt`
-- **Generated by:** All 4p variants
+- **Generated by:** 4psi
 - **Format:** Gnuplot script
 - **Content:** Visualization commands for altitude curves
 - **Usage:** `gnuplot __do_plot_all.txt`
 
-### Comparison Output Files (from compare_methods.pl)
-- `__do_plot_all_monotone.txt`
-- `__do_plot_all_catmull.txt`
-- `__do_plot_all_limited.txt`
-- `__gtk_csv_monotone.TXT`
-- `__gtk_csv_catmull.TXT`
-- `__gtk_csv_limited.TXT`
-- `compare_all.gnuplot`
-- `comparison.png` (after running gnuplot)
+### Comparison Output Files (from generate_all_plots.pl)
+- `__do_plot_method0.txt` through `__do_plot_optimal.txt`
+- `__gtk_csv_method0.TXT` through `__gtk_csv_optimal.TXT`
+- `compare_optimal.gnuplot`
+- `comparison_optimal.png`
 
 ### Debug Output Files
 - `output_original.txt`
@@ -215,29 +220,30 @@
 ## Directory Structure
 
 ```
-4p/
-├── Core Programs
-│   ├── 4p                    (original)
-│   ├── 4p_improved           (new, recommended)
-│   └── 4p_1eq                (variant)
+4psi/
+├── Core Program
+│   ├── 4psi                  (main program)
+│   └── 4p_1eq                (legacy variant)
 │
 ├── Helper Scripts
-│   ├── compare_methods.pl    (new)
-│   ├── test_monotone.sh      (new)
-│   └── x_kml                 (existing)
+│   ├── generate_all_plots.pl
+│   ├── compare_optimal.pl
+│   ├── split_section_test.pl
+│   └── x_kml
 │
 ├── Documentation
-│   ├── README.md             (updated)
-│   ├── QUICK_START.md        (new)
-│   ├── SMOOTHING_METHODS.md  (new)
-│   ├── OVERSHOOT_EXPLAINED.md (new)
-│   ├── IMPROVEMENTS_SUMMARY.md (new)
-│   └── FILES_OVERVIEW.md     (new, this file)
+│   ├── README.md
+│   ├── 4PSI_USER_GUIDE.md
+│   ├── QUICK_START.md
+│   ├── OPTIMAL_ALGORITHM.md
+│   ├── SMOOTHING_METHODS.md
+│   ├── OVERSHOOT_EXPLAINED.md
+│   ├── SOLUTION_SUMMARY.md
+│   └── FILES_OVERVIEW.md     (this file)
 │
 ├── Math Documentation
 │   ├── maths.md
-│   ├── mats.tex
-│   └── mats.pdf
+│   └── mats.tex
 │
 ├── Input Data
 │   ├── alt_mytrack.txt
@@ -249,6 +255,7 @@
 └── Output (Generated)
     ├── __gtk_csv.TXT
     ├── __do_plot_all.txt
+    ├── split_section_comparison.png
     └── comparison files...
 ```
 
@@ -260,13 +267,12 @@
 
 #### 1. Generate altitude equations (recommended method)
 ```bash
-./4p_improved -m 1 alt_mytrack.txt
+./4psi -m 4 alt_mytrack.txt
 ```
 
 #### 2. Compare all methods
 ```bash
-./compare_methods.pl alt_mytrack.txt
-gnuplot compare_all.gnuplot
+./generate_all_plots.pl alt_mytrack.txt
 ```
 
 #### 3. Extract altitude from KML
@@ -276,44 +282,43 @@ gnuplot compare_all.gnuplot
 
 #### 4. Process and visualize
 ```bash
-./4p_improved -m 1 alt_mytrack.txt
+./4psi -m 4 alt_mytrack.txt
 gnuplot __do_plot_all.txt
 ```
 
 #### 5. Use in GPL track editor
 ```bash
-./4p_improved -m 1 alt_mytrack.txt
+./4psi -m 4 alt_mytrack.txt
 # Import __gtk_csv.TXT into GPL track editor
+```
+
+#### 6. Test section splitting
+```bash
+perl split_section_test.pl
+gnuplot split_section_plot.gnuplot
 ```
 
 ---
 
 ## File Modification Status
 
-### ✅ Modified
-- `README.md` - Added section on new smoothing methods
+### Core Files
+- `4psi` - Main program with 5 smoothing methods
+- `4p_1eq` - Legacy variant (preserved)
 
-### ⭐ New Files
-- `4p_improved`
-- `compare_methods.pl`
-- `test_monotone.sh`
-- `QUICK_START.md`
-- `SMOOTHING_METHODS.md`
-- `OVERSHOOT_EXPLAINED.md`
-- `IMPROVEMENTS_SUMMARY.md`
-- `FILES_OVERVIEW.md`
+### Helper Scripts
+- `generate_all_plots.pl` - Method comparison
+- `compare_optimal.pl` - OPTIMAL method comparison
+- `split_section_test.pl` - Section splitting test
+- `x_kml` - KML altitude extraction
 
-### 📦 Unchanged (Preserved)
-- `4p` (original program)
-- `4p_1eq`
-- `x_kml`
-- `maths.md`
-- `mats.tex`
-- `mats.pdf`
-- `Makefile`
-- All input data files
-- All plot files
-- All notes files
+### Documentation
+- Complete user guides and technical documentation
+- Mathematical references
+
+### Data Files
+- Input: `alt_mytrack.txt`, `alt_LPL.txt`
+- Output: Generated by 4psi
 
 ---
 
@@ -333,21 +338,18 @@ gnuplot __do_plot_all.txt
 
 ### For Command Help
 ```bash
-./4p_improved -h
+./4psi -h
 ```
 
 ---
 
 ## Version History
 
-### v2.0 (Current) - Overshoot Minimization
-- Added 4 smoothing methods
-- Implemented Fritsch-Carlson monotone interpolation
-- Added Catmull-Rom with tension
-- Added comparison tools
+### Current Version
+- 5 smoothing methods (0-4)
+- OPTIMAL method (method 4) - recommended
+- Fritsch-Carlson monotone interpolation
+- Catmull-Rom with tension
+- Section splitting capability
 - Comprehensive documentation
-
-### v1.0 (Original)
-- Basic cubic spline interpolation
-- Single smoothing method
 - GPL track format output
