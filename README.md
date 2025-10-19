@@ -4,30 +4,39 @@ GPL Track Altitude Equation Generator
 
 Create GPL track editing altitude trace equation coefficients. Each equation is defined by 4 point sets that make up the previous, current and next sections start and end points.
 
-## 🆕 NEW: OPTIMAL Smoothing Algorithm
+## Usage
 
-**Problem:** The original implementation produces overshoot (unrealistic bumps/dips) in altitude profiles.
-
-**Solution:** Use `4psi` with the optimal method for maximum smoothness with no overshoot:
+**4psi** provides 5 smoothing methods for altitude profile generation:
 
 ```bash
-# RECOMMENDED: OPTIMAL method (C² continuity, no overshoot)
-./4psi -m 4 alt_mytrack.txt
+# Method 0: Original blending (smooth, may overshoot)
+./4psi -m 0 alt_mytrack.txt
 
-# Alternative: Monotone method (C¹ continuity, no overshoot)
+# Method 1: Monotone (Fritsch-Carlson, no overshoot, C¹ continuity)
 ./4psi -m 1 alt_mytrack.txt
+
+# Method 2: Catmull-Rom with tension (adjustable smoothness)
+./4psi -m 2 -t 0.3 alt_mytrack.txt
+
+# Method 3: Limited slopes (fast, minimal overshoot)
+./4psi -m 3 alt_mytrack.txt
+
+# Method 4: OPTIMAL (RECOMMENDED - maximum smoothness, no overshoot, C² continuity)
+./4psi -m 4 alt_mytrack.txt
 
 # Generate all comparison plots
 ./generate_all_plots.pl alt_mytrack.txt
 ```
 
-### Algorithm Comparison
+## Algorithm Comparison
 
-| Algorithm | Smoothness | Overshoot | Continuity | Use Case |
-|-----------|-----------|-----------|------------|----------|
-| **Original** | ⭐⭐⭐⭐⭐ | ❌ High | C² | Don't use |
-| **Monotone** | ⭐⭐⭐ | ✅ None | C¹ | Guaranteed no overshoot |
-| **OPTIMAL** | ⭐⭐⭐⭐⭐ | ✅ None | C² | **Best choice** ⭐ |
+| Method | Algorithm | Smoothness | Overshoot | Continuity | Use Case |
+|--------|-----------|-----------|-----------|------------|----------|
+| **0** | Original | ⭐⭐⭐⭐⭐ | ❌ High | C² | Legacy only |
+| **1** | Monotone | ⭐⭐⭐ | ✅ None | C¹ | Accuracy critical |
+| **2** | Catmull-Rom | ⭐⭐⭐⭐ | ⚠️ Adjustable | C¹ | Fine control |
+| **3** | Limited Slopes | ⭐⭐⭐ | ✅ Minimal | C² | Quick processing |
+| **4** | OPTIMAL | ⭐⭐⭐⭐⭐ | ✅ None | C² | **Recommended** ⭐ |
 
 📖 **See [OPTIMAL_ALGORITHM.md](OPTIMAL_ALGORITHM.md) for technical details**  
 📖 **See [SOLUTION_SUMMARY.md](SOLUTION_SUMMARY.md) for complete documentation**  
