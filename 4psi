@@ -7,16 +7,16 @@ use Getopt::Std;
 getopts('hs:m:t:');
 
 # Smoothing method selection
-# 0 = original (default)
+# 0 = original
 # 1 = monotone (Fritsch-Carlson) - prevents overshoot
 # 2 = catmull-rom with tension
 # 3 = limited slopes (clamped)
-# 4 = optimal (C² continuity, adaptive constraints)
+# 4 = optimal (C² continuity, adaptive constraints) - DEFAULT
 if(defined($opt_m)) {
    $method = $opt_m;
 }
 else {
-   $method = 1;  # Default to monotone
+   $method = 4;  # Default to OPTIMAL
 }
 
 # Smoothing factor (original method) or tension (catmull-rom)
@@ -41,10 +41,10 @@ if(defined($opt_h)) {
    print "Options:\n";
    print "  -m <method>   Smoothing method:\n";
    print "                0 = Original blending\n";
-   print "                1 = Monotone (Fritsch-Carlson) - prevents overshoot [default]\n";
+   print "                1 = Monotone (Fritsch-Carlson) - prevents overshoot\n";
    print "                2 = Catmull-Rom with tension\n";
    print "                3 = Limited slopes (clamped)\n";
-   print "                4 = OPTIMAL (C² continuity, adaptive constraints) ⭐\n";
+   print "                4 = OPTIMAL (C² continuity, adaptive constraints) [default] ⭐\n";
    print "  -s <factor>   Smoothing factor (default 4.0, for method 4: 8.0)\n";
    print "  -t <tension>  Tension for Catmull-Rom (0.0-1.0, default 0.0)\n";
    print "                For method 4: alpha parameter (0.0-1.0, default 0.85)\n";
@@ -89,6 +89,33 @@ sub fit_4_points() {
 sub sign {
    my $x = shift;
    return ($x > 0) - ($x < 0);
+}
+
+# Original blending method (method 0)
+sub original_slope {
+   my ($slope_left, $slope_mid, $slope_right, $is_start, $smooth_factor) = @_;
+   
+   my $slope;
+   
+   if($is_start) {
+      # Calculate S0 (start slope)
+      if(abs($slope_left) < abs($slope_mid)) {
+         $slope = $slope_left + ($slope_mid + $slope_left) / $smooth_factor;
+      }
+      else {
+         $slope = $slope_mid + ($slope_mid + $slope_left) / $smooth_factor;
+      }
+   } else {
+      # Calculate SL (end slope)
+      if(abs($slope_mid) < abs($slope_right)) {
+         $slope = $slope_mid + ($slope_right + $slope_mid) / $smooth_factor;
+      }
+      else {
+         $slope = $slope_right + ($slope_right + $slope_mid) / $smooth_factor;
+      }
+   }
+   
+   return $slope;
 }
 
 # Calculate slope using monotone method (Fritsch-Carlson)
@@ -358,7 +385,17 @@ foreach $section (0..$num_sections) {
 
 
       # Calculate slopes based on selected method
-      if($method == 1) {
+      if($method == 0) {
+         # Original method
+         $SL = original_slope($slope_left, $slope_mid, $slope_right, 0, $smooth);
+         
+         if($section == 0) {
+            $S0 = original_slope($slope_left, $slope_mid, $slope_right, 1, $smooth);
+         } else {
+            $S0 = $all_geo[$section-1][$trace]{SL};
+         }
+         
+      } elsif($method == 1) {
          # Monotone method (Fritsch-Carlson)
          $SL = monotone_slope($slope_left, $slope_mid, $slope_right, 0, $smooth);
          
@@ -390,8 +427,8 @@ foreach $section (0..$num_sections) {
             $S0 = $all_geo[$section-1][$trace]{SL};
          }
          
-      } elsif($method == 4) {
-         # OPTIMAL method (C² continuity, adaptive constraints)
+      } else {
+         # OPTIMAL method (method == 4, default)
          $SL = optimal_slope($slope_left, $slope_mid, $slope_right, 0, $smooth, $tension);
          
          if($section == 0) {
@@ -403,27 +440,6 @@ foreach $section (0..$num_sections) {
                $S0 = optimal_slope($slope_left, $slope_mid, $slope_right, 1, $smooth, $tension);
             }
          } else {
-            $S0 = $all_geo[$section-1][$trace]{SL};
-         }
-         
-      } else {
-         # Original method (method == 0)
-         if(abs($slope_mid) < abs($slope_right)) {
-            $SL = $slope_mid + ($slope_right + $slope_mid) / $smooth;
-         }
-         else {
-            $SL = $slope_right + ($slope_right + $slope_mid) / $smooth;
-         }
-
-         if($section == 0) {
-            if(abs($slope_left) < abs($slope_mid)) {
-               $S0 = $slope_left + ($slope_mid + $slope_left) / $smooth;
-            }
-            else {
-               $S0 = $slope_mid + ($slope_mid + $slope_left) / $smooth;
-            }
-         }
-         else {
             $S0 = $all_geo[$section-1][$trace]{SL};
          }
       }
