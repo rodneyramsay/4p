@@ -42,26 +42,21 @@ Create GPL track editing altitude trace equation coefficients. Each equation is 
 📖 **See [SOLUTION_SUMMARY.md](SOLUTION_SUMMARY.md) for complete documentation**  
 📖 **See [QUICK_TEST.md](QUICK_TEST.md) for testing guide**
 
-## Section Splitting Test
+## Visual Examples
 
-Test the cubic spline section splitting algorithm with `split_section_test.pl`:
+### Method Comparison - Pulse Test
 
-```bash
-# Run the split section test
-perl split_section_test.pl
+![Pulse Sections Comparison](pulse_sections.png)
 
-# Generate visualization
-gnuplot split_section_plot.gnuplot
-```
+This visualization shows how different smoothing methods handle a challenging "pulse" test case with sharp transitions. The OPTIMAL method (green) provides smooth curves while avoiding overshoot, compared to other methods.
 
-This demonstrates how a cubic function can be split at any point while maintaining:
-- **C⁰ continuity**: Position matches at split point
-- **C¹ continuity**: Slope matches at split point
-- **Exact reconstruction**: Split sections perfectly reproduce the original function
+### Junction Detail - Continuity
 
-**Current test:** `y = x³ - 15x - 4` from `[-5, 5]` split at `x = 3`
+![Junction Zoom](zoom_junction.png)
 
---- 
+Close-up view of section junctions showing how the OPTIMAL method maintains smooth C² continuity (continuous position, slope, and curvature) at transition points between sections.
+
+---
 
 Import altitude data one column for each trace.
 
