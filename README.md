@@ -58,9 +58,51 @@ Close-up view of section junctions showing how the OPTIMAL method maintains smoo
 
 ---
 
+## Quick Start - New Track
+
+To process a new track altitude file:
+
+```bash
+# 1. Run 4psi on your altitude file (uses OPTIMAL method by default)
+./4psi alt_newtrack.txt
+
+# 2. Visualize the results
+gnuplot __do_plot_all.txt
+
+# 3. The output file for GPL track editor is ready
+# Import: __gtk_csv.TXT
+```
+
+### Generate Comparison Plots
+
+```bash
+# Generate all visualization plots for your track
+./generate_all_plots.pl alt_newtrack.txt
+
+# View the generated plots:
+#   - __do_plot_method0.txt through __do_plot_optimal.txt (plot scripts)
+#   - __gtk_csv_method0.TXT through __gtk_csv_optimal.TXT (coefficients)
+```
+
+### Using Make for Complete Workflow
+
+```bash
+# Run complete analysis (all methods + visualizations)
+make alt_newtrack.alt
+
+# This automatically:
+#   - Runs all 5 smoothing methods
+#   - Generates comparison data
+#   - Creates visualization plots (if using alt_mytrack.txt)
+```
+
+---
+
+## Input Format
+
 Import altitude data one column for each trace.
 
-Input Format:
+Format:
 
 `   Section Name, Section Length, Trace 1 Altitude, Trace 2 Altitude, ...`
 
