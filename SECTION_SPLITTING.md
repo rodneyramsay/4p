@@ -187,7 +187,7 @@ Expanding and simplifying shows this equals $f_0(L)$ ✓
 
 2. **Section 2** requires recalculating all four coefficients using the standard cubic spline formulas with:
    - New length: $L_2 = L - t$
-   - Start position/slope: $Y_{2}(0), S_{20})}$ rom original function at $x = t$
+   - Start position/slope: $Y_{2}(0), S_{2}(0)$ rom original function at $x = t$
    - End position/slope: $Y_{2}(L), S_{2}(L)$ from original function at $x = L$
 
 3. The coefficients $C_2$ and $D_2$ have simple closed forms (derivative and value at split point), but $A_2$ and $B_2$ must be computed using the full cubic spline formulas.
