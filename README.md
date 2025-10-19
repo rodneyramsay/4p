@@ -1,4 +1,6 @@
-# 4p - GPL Track Altitude Equation Generator
+# 4psi - 4 Point Spline Interpolation
+
+GPL Track Altitude Equation Generator
 
 Create GPL track editing altitude trace equation coefficients. Each equation is defined by 4 point sets that make up the previous, current and next sections start and end points.
 
