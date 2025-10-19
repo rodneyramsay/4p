@@ -20,7 +20,7 @@ This uses the **OPTIMAL method**, which provides maximum smoothness with no over
 | Monotone | `-m 1` | Accuracy critical | ✅ None |
 | Catmull-Rom | `-m 2 -t 0.3` | Fine-tuning smoothness | ⚠️ Adjustable |
 | Limited Slopes | `-m 3` | Simple/fast | ⚠️ Minimal |
-| Original | `-m 0` | Smooth gradual terrain | ❌ Can overshoot |
+| Four Point | `-m 0` | Smooth terrain | ⚠️ High |
 
 ---
 
@@ -75,7 +75,7 @@ Good (monotone):  10m → 20m → 15m  ✅ (stays within bounds)
 ### 4psi Options:
 ```
 -m <method>   Smoothing method:
-              0 = Original blending
+              0 = Four Point
               1 = Monotone (Fritsch-Carlson)
               2 = Catmull-Rom with tension
               3 = Limited slopes
@@ -129,8 +129,8 @@ Good (monotone):  10m → 20m → 15m  ✅ (stays within bounds)
 ### "Still seeing small bumps"
 → Use monotone method: `./4psi -m 1`
 
-### "Need maximum smoothness, don't care about overshoot"
-→ Use original with high smoothing: `./4psi -m 0 -s 10.0`
+### "Need maximum smoothness for gentle terrain"
+→ Use Four Point with high smoothing: `./4psi -m 0 -s 10.0`
 
 ### "Want to see the difference"
 → Run comparison: `./generate_all_plots.pl alt_mytrack.txt`

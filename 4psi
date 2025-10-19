@@ -7,7 +7,7 @@ use Getopt::Std;
 getopts('hs:m:t:');
 
 # Smoothing method selection
-# 0 = original
+# 0 = four point
 # 1 = monotone (Fritsch-Carlson) - prevents overshoot
 # 2 = catmull-rom with tension
 # 3 = limited slopes (clamped)
@@ -40,7 +40,7 @@ if(defined($opt_h)) {
    print "Usage: 4psi [options] <input_file>\n";
    print "Options:\n";
    print "  -m <method>   Smoothing method:\n";
-   print "                0 = Original blending\n";
+   print "                0 = Four Point\n";
    print "                1 = Monotone (Fritsch-Carlson) - prevents overshoot\n";
    print "                2 = Catmull-Rom with tension\n";
    print "                3 = Limited slopes (clamped)\n";
@@ -91,7 +91,7 @@ sub sign {
    return ($x > 0) - ($x < 0);
 }
 
-# Original blending method (method 0)
+# Four Point method (method 0)
 sub original_slope {
    my ($slope_left, $slope_mid, $slope_right, $is_start, $smooth_factor) = @_;
    
@@ -386,7 +386,7 @@ foreach $section (0..$num_sections) {
 
       # Calculate slopes based on selected method
       if($method == 0) {
-         # Original method
+         # Four Point method
          $SL = original_slope($slope_left, $slope_mid, $slope_right, 0, $smooth);
          
          if($section == 0) {

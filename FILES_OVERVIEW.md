@@ -7,7 +7,7 @@
 - **Purpose:** GPL Track Altitude Equation Generator with multiple smoothing methods
 - **Usage:** `./4psi -m <method> [options] <input_file>`
 - **Methods:**
-  - `-m 0`: Original blending
+  - `-m 0`: Four Point
   - `-m 1`: Monotone (Fritsch-Carlson)
   - `-m 2`: Catmull-Rom with tension
   - `-m 3`: Limited slopes (clamped)

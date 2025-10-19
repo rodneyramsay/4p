@@ -9,7 +9,7 @@ Create GPL track editing altitude trace equation coefficients. Each equation is 
 **4psi** provides 5 smoothing methods for altitude profile generation:
 
 ```bash
-# Method 0: Original blending (smooth, may overshoot)
+# Method 0: Four Point (smooth, may overshoot)
 ./4psi -m 0 alt_mytrack.txt
 
 # Method 1: Monotone (Fritsch-Carlson, no overshoot, C¹ continuity)
@@ -32,7 +32,7 @@ Create GPL track editing altitude trace equation coefficients. Each equation is 
 
 | Method | Algorithm | Smoothness | Overshoot | Continuity | Use Case |
 |--------|-----------|-----------|-----------|------------|----------|
-| **0** | Original | ⭐⭐⭐⭐⭐ | ❌ High | C² | Legacy only |
+| **0** | Four Point | ⭐⭐⭐⭐⭐ | ⚠️ High | C² | Smooth terrain |
 | **1** | Monotone | ⭐⭐⭐ | ✅ None | C¹ | Accuracy critical |
 | **2** | Catmull-Rom | ⭐⭐⭐⭐ | ⚠️ Adjustable | C¹ | Fine control |
 | **3** | Limited Slopes | ⭐⭐⭐ | ✅ Minimal | C² | Quick processing |

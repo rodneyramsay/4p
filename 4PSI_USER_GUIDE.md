@@ -33,16 +33,16 @@ gnuplot __do_plot_all.txt
 
 ## Smoothing Methods
 
-### Method 0: Original Blending
+### Method 0: Four Point
 
 **Command:** `./4psi -m 0 alt_mytrack.txt`
 
 **Characteristics:**
 - ✅ Very smooth curves
-- ❌ Can produce significant overshoot
-- ⚠️ May create unrealistic peaks and valleys
+- ⚠️ Can produce overshoot
+- ✅ C² continuity
 
-**Use case:** Only for very gentle terrain where accuracy is not critical
+**Use case:** Smooth, gentle terrain where maximum smoothness is desired
 
 **Parameters:**
 - `-s <factor>` - Smoothing factor (default: 4.0, higher = smoother)
@@ -201,7 +201,7 @@ f(x) = a*x³ + b*x² + c*x + d
 
 | Method | Smoothness | Overshoot | Continuity | Speed | Best For |
 |--------|-----------|-----------|------------|-------|----------|
-| **0 - Original** | ⭐⭐⭐⭐⭐ | ❌ High | C² | Fast | Gentle terrain only |
+| **0 - Four Point** | ⭐⭐⭐⭐⭐ | ⚠️ High | C² | Fast | Smooth terrain |
 | **1 - Monotone** | ⭐⭐⭐ | ✅ None | C¹ | Fast | Accuracy critical |
 | **2 - Catmull-Rom** | ⭐⭐⭐⭐ | ⚠️ Adjustable | C¹ | Fast | Fine control needed |
 | **3 - Limited** | ⭐⭐⭐ | ✅ Minimal | C² | Fast | Quick processing |
