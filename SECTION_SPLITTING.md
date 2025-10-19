@@ -102,21 +102,41 @@ $$C_2 = S_0^{(2)} = 3A_0 t^2 + 2B_0 t + C_0$$
 
 $$D_2 = Y_0^{(2)} = A_0 t^3 + B_0 t^2 + C_0 t + D_0$$
 
-### Simplified Forms
+### Detailed Calculation
 
-Let $L_2 = L - t$. Substituting the known values:
+Let $L_2 = L - t$. We need to calculate:
 
-$$\boxed{A_2 = \frac{1}{(L-t)^3} [(L-t)(3A_0 t^2 + 2B_0 t + C_0 + 3A_0 L^2 + 2B_0 L + C_0) + 2(A_0 t^3 + B_0 t^2 + C_0 t + D_0 - A_0 L^3 - B_0 L^2 - C_0 L - D_0)]}$$
+$$A_2 = \frac{1}{L_2^3} [L_2(S_0^{(2)} + S_L^{(2)}) + 2(Y_0^{(2)} - Y_L^{(2)})]$$
 
-After algebraic simplification:
+Substituting:
+- $S_0^{(2)} = 3A_0 t^2 + 2B_0 t + C_0$
+- $S_L^{(2)} = 3A_0 L^2 + 2B_0 L + C_0$
+- $Y_0^{(2)} = A_0 t^3 + B_0 t^2 + C_0 t + D_0$
+- $Y_L^{(2)} = A_0 L^3 + B_0 L^2 + C_0 L + D_0$
 
-$$\boxed{A_2 = A_0}$$
+$$A_2 = \frac{1}{(L-t)^3} [(L-t)(3A_0 t^2 + 2B_0 t + C_0 + 3A_0 L^2 + 2B_0 L + C_0) + 2(A_0 t^3 + B_0 t^2 + C_0 t - A_0 L^3 - B_0 L^2 - C_0 L)]$$
 
-$$\boxed{B_2 = B_0}$$
+$$A_2 = \frac{1}{(L-t)^3} [(L-t)(3A_0(t^2 + L^2) + 2B_0(t + L) + 2C_0) + 2A_0(t^3 - L^3) + 2B_0(t^2 - L^2) + 2C_0(t - L)]$$
+
+Similarly for $B_2$:
+
+$$B_2 = \frac{1}{L_2^2} [L_2(-2S_0^{(2)} - S_L^{(2)}) - 3(Y_0^{(2)} - Y_L^{(2)})]$$
+
+$$B_2 = \frac{1}{(L-t)^2} [(L-t)(-2(3A_0 t^2 + 2B_0 t + C_0) - (3A_0 L^2 + 2B_0 L + C_0)) - 3(A_0 t^3 + B_0 t^2 + C_0 t - A_0 L^3 - B_0 L^2 - C_0 L)]$$
+
+**Note**: These do NOT simplify to $A_0$ and $B_0$. The coefficients depend on the split position $t$ and must be calculated using the formulas above.
+
+### Final Coefficients for Section 2
 
 $$\boxed{C_2 = 3A_0 t^2 + 2B_0 t + C_0}$$
 
 $$\boxed{D_2 = A_0 t^3 + B_0 t^2 + C_0 t + D_0}$$
+
+$$\boxed{A_2 = \frac{1}{(L-t)^3} [(L-t)(S_0^{(2)} + S_L^{(2)}) + 2(Y_0^{(2)} - Y_L^{(2)})]}$$
+
+$$\boxed{B_2 = \frac{1}{(L-t)^2} [(L-t)(-2S_0^{(2)} - S_L^{(2)}) - 3(Y_0^{(2)} - Y_L^{(2)})]}$$
+
+Where the values are substituted from above.
 
 ## Summary
 
@@ -135,10 +155,10 @@ D_1 &= D_0
 
 $$\boxed{
 \begin{align}
-A_2 &= A_0 \\
-B_2 &= B_0 \\
 C_2 &= 3A_0 t^2 + 2B_0 t + C_0 \\
-D_2 &= A_0 t^3 + B_0 t^2 + C_0 t + D_0
+D_2 &= A_0 t^3 + B_0 t^2 + C_0 t + D_0 \\
+A_2 &= \frac{1}{(L-t)^3} [(L-t)(S_0^{(2)} + S_L^{(2)}) + 2(Y_0^{(2)} - Y_L^{(2)})] \\
+B_2 &= \frac{1}{(L-t)^2} [(L-t)(-2S_0^{(2)} - S_L^{(2)}) - 3(Y_0^{(2)} - Y_L^{(2)})]
 \end{align}
 }$$
 
@@ -161,8 +181,15 @@ $$f_2(L-t) = A_0(L-t)^3 + B_0(L-t)^2 + C_2(L-t) + D_2$$
 
 Expanding and simplifying shows this equals $f_0(L)$ ✓
 
-## Key Insight
+## Key Insights
 
-The cubic and quadratic coefficients ($A$ and $B$) remain **unchanged** in both sections. Only the linear coefficient ($C$) and constant term ($D$) change for Section 2, and they change according to the derivative and value of the original function at the split point.
+1. **Section 1** uses the **exact same coefficients** as the original section $(A_0, B_0, C_0, D_0)$ - it's just evaluated over a shorter range $[0, t]$ instead of $[0, L]$.
 
-This property makes section splitting computationally efficient and numerically stable.
+2. **Section 2** requires recalculating all four coefficients using the standard cubic spline formulas with:
+   - New length: $L_2 = L - t$
+   - Start position/slope: $Y_0^{(2)}, S_0^{(2)}$ from original function at $x = t$
+   - End position/slope: $Y_L^{(2)}, S_L^{(2)}$ from original function at $x = L$
+
+3. The coefficients $C_2$ and $D_2$ have simple closed forms (derivative and value at split point), but $A_2$ and $B_2$ must be computed using the full cubic spline formulas.
+
+4. This splitting preserves **exact C¹ continuity** (position and slope) at the split point and endpoints.
