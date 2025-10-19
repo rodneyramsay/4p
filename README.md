@@ -65,7 +65,7 @@ Subtract $2f(L) - Lf'(L)$ to get $A$
 
 $A = 1/L^3 [L(S_0 + S_L) + 2(Y_0 - Y_L)]$
 
-Solve for $B$ in $f'(x)'$
+Solve for $B$ in $f'(x)$
 
 $B = 1/L^2 [(-2S_0 - S_L) - 3(Y_0 - Y_L)]$
 
