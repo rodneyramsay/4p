@@ -8,11 +8,11 @@ Create GPL track editing altitude trace equation coefficients. Each equation is 
 
 **Problem:** The original implementation produces overshoot (unrealistic bumps/dips) in altitude profiles.
 
-**Solution:** Use the new `4p_optimal` algorithm for maximum smoothness with no overshoot:
+**Solution:** Use `4psi` with the optimal method for maximum smoothness with no overshoot:
 
 ```bash
 # RECOMMENDED: OPTIMAL method (C² continuity, no overshoot)
-./4p_optimal alt_mytrack.txt
+./4psi -m 4 alt_mytrack.txt
 
 # Alternative: Monotone method (C¹ continuity, no overshoot)
 ./4psi -m 1 alt_mytrack.txt
@@ -33,6 +33,25 @@ Create GPL track editing altitude trace equation coefficients. Each equation is 
 📖 **See [SOLUTION_SUMMARY.md](SOLUTION_SUMMARY.md) for complete documentation**  
 📖 **See [QUICK_TEST.md](QUICK_TEST.md) for testing guide**
 
+## Section Splitting Test
+
+Test the cubic spline section splitting algorithm with `split_section_test.pl`:
+
+```bash
+# Run the split section test
+perl split_section_test.pl
+
+# Generate visualization
+gnuplot split_section_plot.gnuplot
+```
+
+This demonstrates how a cubic function can be split at any point while maintaining:
+- **C⁰ continuity**: Position matches at split point
+- **C¹ continuity**: Slope matches at split point
+- **Exact reconstruction**: Split sections perfectly reproduce the original function
+
+**Current test:** `y = x³ - 15x - 4` from `[-5, 5]` split at `x = 3`
+
 --- 
 
 Import altitude data one column for each trace.
@@ -43,7 +62,7 @@ Input Format:
 
 Where `Trace Altitude` is the elevation (Y value) at the start of the section for each trace.
 
-The 4p program also creates stitched gnuplot derived formulas for each trace and section of the track for visualizing equation curves. 
+The 4psi program also creates stitched gnuplot derived formulas for each trace and section of the track for visualizing equation curves. 
 
 
 Equations for solving functions. 
