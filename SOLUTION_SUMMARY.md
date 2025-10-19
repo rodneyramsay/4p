@@ -3,12 +3,12 @@
 ## Problem Statement
 
 You had two algorithms with opposite trade-offs:
-1. **Old algorithm (`4p`)**: Too much overshoot → unrealistic peaks/valleys
-2. **New algorithm (`4p_improved -m 1`)**: No overshoot but not smooth enough → visible kinks
+1. **Old algorithm (method 0)**: Too much overshoot → unrealistic peaks/valleys
+2. **Monotone algorithm (method 1)**: No overshoot but not smooth enough → visible kinks
 
 **Goal**: Maximize smoothness while eliminating overshoot
 
-## Solution: `4p_optimal`
+## Solution: Optimal Method (4psi -m 4)
 
 Created a new algorithm that achieves **both** maximum smoothness and zero overshoot through:
 
@@ -38,54 +38,54 @@ Created a new algorithm that achieves **both** maximum smoothness and zero overs
 
 ### Basic (Recommended)
 ```bash
-./4p_optimal alt_mytrack.txt
+./4psi -m 4 alt_mytrack.txt
 ```
 Uses optimal defaults: smoothing=8.0, alpha=0.85
 
 ### Custom Smoothing
 ```bash
 # More aggressive smoothing
-./4p_optimal -s 12.0 alt_mytrack.txt
+./4psi -m 4 -s 12.0 alt_mytrack.txt
 
 # Less aggressive smoothing
-./4p_optimal -s 6.0 alt_mytrack.txt
+./4psi -m 4 -s 6.0 alt_mytrack.txt
 ```
 
 ### Custom Overshoot Prevention
 ```bash
 # Maximum smoothness (may have slight overshoot)
-./4p_optimal -a 0.5 alt_mytrack.txt
+./4psi -m 4 -t 0.5 alt_mytrack.txt
 
 # Balanced
-./4p_optimal -a 0.75 alt_mytrack.txt
+./4psi -m 4 -t 0.75 alt_mytrack.txt
 
 # Near-optimal (default)
-./4p_optimal -a 0.85 alt_mytrack.txt
+./4psi -m 4 -t 0.85 alt_mytrack.txt
 
 # Guaranteed no overshoot
-./4p_optimal -a 1.0 alt_mytrack.txt
+./4psi -m 4 -t 1.0 alt_mytrack.txt
 ```
 
 ### Combined
 ```bash
 # Very smooth with strong overshoot prevention
-./4p_optimal -s 12.0 -a 0.9 alt_mytrack.txt
+./4psi -m 4 -s 12.0 -t 0.9 alt_mytrack.txt
 ```
 
 ## Comparison
 
 | Algorithm | Smoothness | Overshoot | Best For |
 |-----------|-----------|-----------|----------|
-| **4p (old)** | ⭐⭐⭐⭐⭐ | ❌ High | Gentle terrain only |
-| **4p_improved -m 1** | ⭐⭐⭐ | ✅ None | Accuracy critical |
-| **4p_optimal** | ⭐⭐⭐⭐⭐ | ✅ None | **All tracks** ⭐ |
+| **Method 0 (original)** | ⭐⭐⭐⭐⭐ | ❌ High | Gentle terrain only |
+| **Method 1 (monotone)** | ⭐⭐⭐ | ✅ None | Accuracy critical |
+| **Method 4 (optimal)** | ⭐⭐⭐⭐⭐ | ✅ None | **All tracks** ⭐ |
 
 ## Testing
 
 ### Quick Test
 ```bash
 # Run the optimal algorithm
-./4p_optimal alt_mytrack.txt
+./4psi -m 4 alt_mytrack.txt
 
 # View output
 gnuplot __do_plot_all.txt
@@ -140,9 +140,9 @@ gnuplot compare_optimal.gnuplot
 - **C² blending**: Smooth second derivatives eliminate kinks
 - **Extrema handling**: Special care at peaks/valleys
 
-## Files Created
+## Key Files
 
-1. **`4p_optimal`** - The optimal algorithm (executable)
+1. **`4psi`** - Unified program with all smoothing methods (0-4)
 2. **`OPTIMAL_ALGORITHM.md`** - Comprehensive documentation
 3. **`compare_optimal.pl`** - Comparison script with all 5 methods
 4. **`QUICK_TEST.md`** - Quick testing guide
@@ -152,22 +152,22 @@ gnuplot compare_optimal.gnuplot
 
 ### Flat with Small Bumps
 ```bash
-./4p_optimal -s 10.0 -a 0.9 input.txt
+./4psi -m 4 -s 10.0 -t 0.9 input.txt
 ```
 
 ### Varied/Hilly (Most Common)
 ```bash
-./4p_optimal input.txt  # Use defaults
+./4psi -m 4 input.txt  # Use defaults
 ```
 
 ### Smooth Gradual Changes
 ```bash
-./4p_optimal -s 12.0 -a 0.7 input.txt
+./4psi -m 4 -s 12.0 -t 0.7 input.txt
 ```
 
 ### Sharp Peaks/Valleys
 ```bash
-./4p_optimal -s 6.0 -a 0.9 input.txt
+./4psi -m 4 -s 6.0 -t 0.9 input.txt
 ```
 
 ## Output Files
@@ -178,19 +178,19 @@ Same as other methods:
 
 ## Advantages Over Previous Methods
 
-### vs. Old Algorithm (4p)
+### vs. Method 0 (Original)
 ✅ Eliminates overshoot  
 ✅ More realistic altitude profiles  
 ✅ No false peaks/valleys  
 ✅ Maintains smoothness  
 
-### vs. Monotone (4p_improved -m 1)
+### vs. Method 1 (Monotone)
 ✅ Smoother curves (C² continuity)  
 ✅ No visible kinks  
 ✅ More natural-looking transitions  
 ✅ Adjustable via alpha parameter  
 
-### vs. Catmull-Rom (4p_improved -m 2)
+### vs. Method 2 (Catmull-Rom)
 ✅ Better overshoot control  
 ✅ More predictable behavior  
 ✅ Optimized for altitude profiles  
@@ -215,7 +215,7 @@ The algorithm has been tested and validated:
 
 1. **Test with your track data**:
    ```bash
-   ./4p_optimal alt_mytrack.txt
+   ./4psi -m 4 alt_mytrack.txt
    ```
 
 2. **Compare with old methods**:
@@ -226,11 +226,11 @@ The algorithm has been tested and validated:
 
 3. **Adjust parameters if needed**:
    - Increase `-s` for more smoothness
-   - Increase `-a` for tighter overshoot prevention
-   - Decrease `-a` for maximum smoothness
+   - Increase `-t` for tighter overshoot prevention
+   - Decrease `-t` for maximum smoothness
 
 4. **Use in production**:
-   - Replace calls to `4p` with `4p_optimal`
+   - Use `./4psi -m 4` for optimal results
    - Use default parameters for most cases
    - Adjust only if specific terrain requires it
 
@@ -244,4 +244,4 @@ The optimal algorithm successfully solves your problem:
 ✅ **Efficient** with same O(n) complexity  
 ✅ **Easy to use** with sensible defaults  
 
-**Recommendation**: Use `./4p_optimal` as your default algorithm for all track generation.
+**Recommendation**: Use `./4psi -m 4` as your default algorithm for all track generation.
