@@ -114,15 +114,15 @@ Substituting:
 - $Y_0^{(2)} = A_0 t^3 + B_0 t^2 + C_0 t + D_0$
 - $Y_L^{(2)} = A_0 L^3 + B_0 L^2 + C_0 L + D_0$
 
-$$A_2 = \frac{1}{(L-t)^3} [(L-t)(3A_0 t^2 + 2B_0 t + C_0 + 3A_0 L^2 + 2B_0 L + C_0) + 2(A_0 t^3 + B_0 t^2 + C_0 t - A_0 L^3 - B_0 L^2 - C_0 L)]$$
+$$A_2 = \frac{1}{L_2^3} [L_2(3A_0 t^2 + 2B_0 t + C_0 + 3A_0 L^2 + 2B_0 L + C_0) + 2(A_0 t^3 + B_0 t^2 + C_0 t - A_0 L^3 - B_0 L^2 - C_0 L)]$$
 
-$$A_2 = \frac{1}{(L-t)^3} [(L-t)(3A_0(t^2 + L^2) + 2B_0(t + L) + 2C_0) + 2A_0(t^3 - L^3) + 2B_0(t^2 - L^2) + 2C_0(t - L)]$$
+$$A_2 = \frac{1}{L_2^3} [L_2(3A_0(t^2 + L^2) + 2B_0(t + L) + 2C_0) + 2A_0(t^3 - L^3) + 2B_0(t^2 - L^2) + 2C_0(t - L)]$$
 
 Similarly for $B_2$:
 
 $$B_2 = \frac{1}{L_2^2} [L_2(-2S_0^{(2)} - S_L^{(2)}) - 3(Y_0^{(2)} - Y_L^{(2)})]$$
 
-$$B_2 = \frac{1}{(L-t)^2} [(L-t)(-2(3A_0 t^2 + 2B_0 t + C_0) - (3A_0 L^2 + 2B_0 L + C_0)) - 3(A_0 t^3 + B_0 t^2 + C_0 t - A_0 L^3 - B_0 L^2 - C_0 L)]$$
+$$B_2 = \frac{1}{L_2^2} [L_2(-2(3A_0 t^2 + 2B_0 t + C_0) - (3A_0 L^2 + 2B_0 L + C_0)) - 3(A_0 t^3 + B_0 t^2 + C_0 t - A_0 L^3 - B_0 L^2 - C_0 L)]$$
 
 **Note**: These do NOT simplify to $A_0$ and $B_0$. The coefficients depend on the split position $t$ and must be calculated using the formulas above.
 
@@ -132,9 +132,9 @@ $$\boxed{C_2 = 3A_0 t^2 + 2B_0 t + C_0}$$
 
 $$\boxed{D_2 = A_0 t^3 + B_0 t^2 + C_0 t + D_0}$$
 
-$$\boxed{A_2 = \frac{1}{(L-t)^3} [(L-t)(S_0^{(2)} + S_L^{(2)}) + 2(Y_0^{(2)} - Y_L^{(2)})]}$$
+$$\boxed{A_2 = \frac{1}{L_2^3} [L_2(S_0^{(2)} + S_L^{(2)}) + 2(Y_0^{(2)} - Y_L^{(2)})]}$$
 
-$$\boxed{B_2 = \frac{1}{(L-t)^2} [(L-t)(-2S_0^{(2)} - S_L^{(2)}) - 3(Y_0^{(2)} - Y_L^{(2)})]}$$
+$$\boxed{B_2 = \frac{1}{L_2^2} [L_2(-2S_0^{(2)} - S_L^{(2)}) - 3(Y_0^{(2)} - Y_L^{(2)})]}$$
 
 Where the values are substituted from above.
 
@@ -151,14 +151,14 @@ D_1 &= D_0
 \end{align}
 }$$
 
-### Section 2: $[0, L-t]$ with $L_2 = L - t$
+### Section 2: $[0, L_2]$ with $L_2 = L - t$
 
 $$\boxed{
 \begin{align}
 C_2 &= 3A_0 t^2 + 2B_0 t + C_0 \\
 D_2 &= A_0 t^3 + B_0 t^2 + C_0 t + D_0 \\
-A_2 &= \frac{1}{(L-t)^3} [(L-t)(S_0^{(2)} + S_L^{(2)}) + 2(Y_0^{(2)} - Y_L^{(2)})] \\
-B_2 &= \frac{1}{(L-t)^2} [(L-t)(-2S_0^{(2)} - S_L^{(2)}) - 3(Y_0^{(2)} - Y_L^{(2)})]
+A_2 &= \frac{1}{L_2^3} [L_2(S_0^{(2)} + S_L^{(2)}) + 2(Y_0^{(2)} - Y_L^{(2)})] \\
+B_2 &= \frac{1}{L_2^2} [L_2(-2S_0^{(2)} - S_L^{(2)}) - 3(Y_0^{(2)} - Y_L^{(2)})]
 \end{align}
 }$$
 
@@ -177,7 +177,7 @@ $$f_1'(t) = 3A_0 t^2 + 2B_0 t + C_0 = f_0'(t) \quad \checkmark$$
 $$f_2'(0) = C_2 = 3A_0 t^2 + 2B_0 t + C_0 = f_0'(t) \quad \checkmark$$
 
 ### End position:
-$$f_2(L-t) = A_0(L-t)^3 + B_0(L-t)^2 + C_2(L-t) + D_2$$
+$$f_2(L_2) = A_2 L_2^3 + B_2 L_2^2 + C_2 L_2 + D_2$$
 
 Expanding and simplifying shows this equals $f_0(L)$ ✓
 
