@@ -343,8 +343,8 @@ gnuplot __do_plot_all.txt
 make alt_mytrack.alt
 
 # View the results
-display comparison_optimal.png
 display pulse_sections.png
+display zoom_junction.png
 ```
 
 ### Example 3: Fine-tune OPTIMAL method

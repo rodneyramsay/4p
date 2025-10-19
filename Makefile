@@ -14,11 +14,8 @@ all: alt_mytrack.alt
 	@echo "Step 1: Running all smoothing methods..."
 	./compare_optimal.pl $<
 	@echo ""
-	@echo "Step 2: Creating comparison plot..."
-	gnuplot compare_optimal.gnuplot
-	@echo ""
 	@echo "========================================"
-	@echo "✓ Complete! Generated: comparison_optimal.png"
+	@echo "✓ Complete! Method comparison files generated"
 	@echo "========================================"
 	@touch $@
 
@@ -35,7 +32,6 @@ alt_mytrack.alt: alt_mytrack.txt
 	./generate_plot_scripts.pl
 	@echo ""
 	@echo "Step 3: Creating all visualizations..."
-	gnuplot compare_optimal.gnuplot
 	gnuplot plot_pulse_sections.gnuplot
 	gnuplot plot_zoom_transition.gnuplot
 	gnuplot plot_zoom_junction.gnuplot
@@ -43,7 +39,6 @@ alt_mytrack.alt: alt_mytrack.txt
 	@echo ""
 	@echo "========================================"
 	@echo "✓ Complete! Generated files:"
-	@echo "  - comparison_optimal.png"
 	@echo "  - pulse_sections.png"
 	@echo "  - zoom_transition.png"
 	@echo "  - zoom_junction.png"

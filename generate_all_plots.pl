@@ -61,8 +61,7 @@ print "Generated plots:\n";
 print "  1. pulse_sections.png         - Sections colored differently\n";
 print "  2. zoom_transition.png        - Zoomed view of 195m transition\n";
 print "  3. zoom_junction.png          - Super zoom of 151.6m junction\n";
-print "  4. zoom_junction2.png         - Super zoom of 195.4m junction\n";
-print "  5. comparison_optimal.png     - Full 6-panel comparison\n\n";
+print "  4. zoom_junction2.png         - Super zoom of 195.4m junction\n\n";
 
 print "Method comparison files:\n";
 print "  - __do_plot_method0.txt       - Original method\n";

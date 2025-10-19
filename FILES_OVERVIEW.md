@@ -172,8 +172,8 @@
 ### Comparison Output Files (from generate_all_plots.pl)
 - `__do_plot_method0.txt` through `__do_plot_optimal.txt`
 - `__gtk_csv_method0.TXT` through `__gtk_csv_optimal.TXT`
-- `compare_optimal.gnuplot`
-- `comparison_optimal.png`
+- `pulse_sections.png`
+- `zoom_junction.png`, `zoom_junction2.png`, `zoom_transition.png`
 
 ### Debug Output Files
 - `output_original.txt`
