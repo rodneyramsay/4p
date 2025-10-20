@@ -11,41 +11,41 @@ Slope at start of section $S_0$
 Slope at end of section $S_L$
 
 
-$$f(x) = Ax^3 + Bx^2 + Cx + D \tag{1}$$
+$$f(x) = Ax^3 + Bx^2 + Cx + D$$
 
-$$f'(x) = 3Ax^2 + 2Bx + C \tag{2}$$
+$$f'(x) = 3Ax^2 + 2Bx + C$$
 
-$$f(0) = Y_0 = D \tag{3}$$
+$$f(0) = Y_0 = D$$
 
-$$f(L) = Y_L = AL^3 + BL^2 + CL + D \tag{4}$$
+$$f(L) = Y_L = AL^3 + BL^2 + CL + D$$
 
-$$f'(0) = S_0 = C \tag{5}$$
+$$f'(0) = S_0 = C$$
 
-$$f'(L) = S_L = 3AL^2 + 2BL + S_0 \tag{6}$$
+$$f'(L) = S_L = 3AL^2 + 2BL + S_0$$
 
 
 Subtract $2f(L) - Lf'(L)$ to get $A$
 
-$$A = \frac{L(S_0 + S_L) + 2(Y_0 - Y_L)}{L^3} \tag{7}$$
+$$A = \frac{L(S_0 + S_L) + 2(Y_0 - Y_L)}{L^3}$$
 
 Solve for $B$ in $f'(x)'$
 
-$$B = \frac{L(-2S_0 - S_L) - 3(Y_0 - Y_L)}{L^2} \tag{8}$$
+$$B = \frac{L(-2S_0 - S_L) - 3(Y_0 - Y_L)}{L^2}$$
 
-$$C = S_0 \tag{9}$$
+$$C = S_0$$
 
-$$D = Y_0 \tag{10}$$
+$$D = Y_0$$
 
 
 Convert range from $[0:L]$ to $[0:1]$
 
-$$A_{[0:1]} = L^3A_{[0:L]} \tag{11}$$
+$$A_{[0:1]} = L^3A_{[0:L]}$$
 
-$$B_{[0:1]} = L^2B_{[0:L]} \tag{12}$$
+$$B_{[0:1]} = L^2B_{[0:L]}$$
 
-$$C_{[0:1]} = LC_{[0:L]} \tag{13}$$
+$$C_{[0:1]} = LC_{[0:L]}$$
 
-$$D_{[0:1]} = D_{[0:L]} \tag{14}$$
+$$D_{[0:1]} = D_{[0:L]}$$
 
 
 
@@ -53,10 +53,10 @@ $$D_{[0:1]} = D_{[0:L]} \tag{14}$$
 
 **Altitude Function Parameters**
 
-**$$A = L(S_0 + S_L) + 2(Y_0 - Y_L) \tag{15}$$**
+**$$A = L(S_0 + S_L) + 2(Y_0 - Y_L)$$**
 
-**$$B = L(-2S_0 - S_L) - 3(Y_0 - Y_L) \tag{16}$$**
+**$$B = L(-2S_0 - S_L) - 3(Y_0 - Y_L)$$**
 
-**$$C = LS_0 \tag{17}$$**
+**$$C = LS_0$$**
 
-**$$D = Y_0 \tag{18}$$**
+**$$D = Y_0$$**
