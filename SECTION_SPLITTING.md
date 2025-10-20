@@ -124,8 +124,6 @@ $$B_2 = \frac{1}{L_2^2} [L_2(-2S_{2}(0) - S_{2}(L)) - 3(Y_{2}(0) - Y_{2}(L))]$$
 
 $$B_2 = \frac{1}{L_2^2} [L_2(-2(3A_0 t^2 + 2B_0 t + C_0) - (3A_0 L^2 + 2B_0 L + C_0)) - 3(A_0 t^3 + B_0 t^2 + C_0 t - A_0 L^3 - B_0 L^2 - C_0 L)]$$
 
-**Note**: These do NOT simplify to $A_0$ and $B_0$. The coefficients depend on the split position $t$ and must be calculated using the formulas above.
-
 ### Final Coefficients for Section 2
 
 $$\boxed{C_2 = 3A_0 t^2 + 2B_0 t + C_0}$$
