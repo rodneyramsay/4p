@@ -21,7 +21,7 @@ Create GPL track editing altitude trace equation coefficients. Each equation is 
 # Method 3: Limited slopes (fast, minimal overshoot)
 ./4psi -m 3 alt_mytrack.txt
 
-# Method 4: OPTIMAL (RECOMMENDED - maximum smoothness, no overshoot, C² continuity)
+# Method 4: OPTIMAL (RECOMMENDED - maximum smoothness, optmized overshoot, C² continuity)
 ./4psi -m 4 alt_mytrack.txt
 
 # Generate all comparison plots
@@ -36,7 +36,7 @@ Create GPL track editing altitude trace equation coefficients. Each equation is 
 | **1** | Monotone | ⭐⭐⭐ | ✅ None | C¹ | Accuracy critical |
 | **2** | Catmull-Rom | ⭐⭐⭐⭐ | ⚠️ Adjustable | C¹ | Fine control |
 | **3** | Limited Slopes | ⭐⭐⭐ | ✅ Minimal | C² | Quick processing |
-| **4** | OPTIMAL | ⭐⭐⭐⭐⭐ | ✅ None | C² | **Recommended** ⭐ |
+| **4** | OPTIMAL | ⭐⭐⭐⭐⭐ | ✅ Controlled | C² | **Recommended** ⭐ |
 
 📖 **See [OPTIMAL_ALGORITHM.md](OPTIMAL_ALGORITHM.md) for technical details**  
 📖 **See [SOLUTION_SUMMARY.md](SOLUTION_SUMMARY.md) for complete documentation**  
