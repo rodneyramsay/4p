@@ -81,7 +81,10 @@ Good (monotone):  10m → 20m → 15m  ✅ (stays within bounds)
               3 = Limited slopes
               4 = Harmonic Mean [DEFAULT]
 
--s <factor>   Smoothing factor (default 4.0, 8.0 for method 4)
+-q <factor>   Q-factor for Method 0 (default 4.0)
+              Higher = smoother
+
+-s <factor>   Smoothing factor for methods 1-4 (default 4.0, 8.0 for method 4)
               Higher = smoother
 
 -t <value>    Tension (method 2) or alpha (method 4)
@@ -130,7 +133,7 @@ Good (monotone):  10m → 20m → 15m  ✅ (stays within bounds)
 → Use monotone method: `./4psi -m 1`
 
 ### "Need maximum smoothness for gentle terrain"
-→ Use Four Point with high smoothing: `./4psi -m 0 -s 10.0`
+→ Use Four Point with high q-factor: `./4psi -m 0 -q 10.0`
 
 ### "Want to see the difference"
 → Run comparison: `./generate_all_plots.pl alt_mytrack.txt`

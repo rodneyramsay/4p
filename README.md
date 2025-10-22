@@ -10,7 +10,7 @@ Create GPL track editing altitude trace equation coefficients. Each equation is 
 
 ```bash
 # Method 0: Four Point (smooth, may overshoot)
-./4psi -m 0 alt_mytrack.txt
+./4psi -m 0 -q 4.0 alt_mytrack.txt
 
 # Method 1: Monotone (Fritsch-Carlson, no overshoot, C¹ continuity)
 ./4psi -m 1 alt_mytrack.txt

@@ -20,7 +20,7 @@ unless (-f $input_file) {
 }
 
 print "=" x 70 . "\n";
-print "METHOD 0 (FOUR POINT) PARAMETER SWEEP\n";
+print "METHOD 0 (FOUR POINT) Q-FACTOR PARAMETER SWEEP\n";
 print "=" x 70 . "\n";
 print "Input file: $input_file\n\n";
 
@@ -28,17 +28,17 @@ print "Input file: $input_file\n\n";
 my $sweep_dir = "parameter_sweep";
 mkdir $sweep_dir unless -d $sweep_dir;
 
-# Sweep smoothing factor for Method 0
-print "Sweeping Four Point method (0) - Smoothing factor...\n";
+# Sweep q-factor for Method 0
+print "Sweeping Four Point method (0) - Q-factor...\n";
 print "-" x 70 . "\n";
 
-my @smoothing_values = (2.0, 4.0, 6.0, 8.0, 10.0, 12.0);
+my @qfactor_values = (2.0, 4.0, 6.0, 8.0, 10.0, 12.0);
 
-foreach my $s (@smoothing_values) {
-    my $label = sprintf("method0_s%.1f", $s);
-    print "  Running: method=0, smoothing=$s\n";
+foreach my $q (@qfactor_values) {
+    my $label = sprintf("method0_q%.1f", $q);
+    print "  Running: method=0, q-factor=$q\n";
     
-    system("./4psi -m 0 -s $s $input_file > /dev/null 2>&1");
+    system("./4psi -m 0 -q $q $input_file > /dev/null 2>&1");
     
     # Save outputs with descriptive names
     system("cp __gtk_csv.TXT $sweep_dir/${label}_gtk.TXT");
@@ -49,4 +49,4 @@ print "\n" . "=" x 70 . "\n";
 print "SWEEP COMPLETE!\n";
 print "=" x 70 . "\n";
 print "\nResults saved in: $sweep_dir/\n";
-print "Generated files: ${sweep_dir}/method0_s*\n\n";
+print "Generated files: ${sweep_dir}/method0_q*\n\n";

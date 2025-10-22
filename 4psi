@@ -4,7 +4,7 @@ use Math::Trig;
 use Math::MatrixLUP;
 use Getopt::Std;
 
-getopts('hs:m:t:');
+getopts('hs:m:t:q:');
 
 # Smoothing method selection
 # 0 = four point
@@ -19,7 +19,15 @@ else {
    $method = 4;  # Default to Harmonic Mean
 }
 
-# Smoothing factor (original method) or tension (catmull-rom)
+# Q-factor for Method 0 (Four Point)
+if(defined($opt_q)) {
+   $qfactor = $opt_q;
+}
+else {
+   $qfactor = 4.0;
+}
+
+# Smoothing factor for other methods
 if(defined($opt_s)) {
    $smooth = $opt_s;
 }
@@ -45,7 +53,8 @@ if(defined($opt_h)) {
    print "                2 = Catmull-Rom with tension\n";
    print "                3 = Limited slopes (clamped)\n";
    print "                4 = Harmonic Mean (C¹ continuity, adaptive constraints) [default] ⭐\n";
-   print "  -s <factor>   Smoothing factor (default 4.0, for method 4: 8.0)\n";
+   print "  -q <factor>   Q-factor for Method 0 (default 4.0)\n";
+   print "  -s <factor>   Smoothing factor for methods 1-4 (default 4.0, for method 4: 8.0)\n";
    print "  -t <tension>  Tension for Catmull-Rom (0.0-1.0, default 0.0)\n";
    print "                For method 4: alpha parameter (0.0-1.0, default 0.85)\n";
    print "  -h            Show this help\n";
@@ -387,10 +396,10 @@ foreach $section (0..$num_sections) {
       # Calculate slopes based on selected method
       if($method == 0) {
          # Four Point method
-         $SL = original_slope($slope_left, $slope_mid, $slope_right, 0, $smooth);
+         $SL = original_slope($slope_left, $slope_mid, $slope_right, 0, $qfactor);
          
          if($section == 0) {
-            $S0 = original_slope($slope_left, $slope_mid, $slope_right, 1, $smooth);
+            $S0 = original_slope($slope_left, $slope_mid, $slope_right, 1, $qfactor);
          } else {
             $S0 = $all_geo[$section-1][$trace]{SL};
          }
