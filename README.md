@@ -32,7 +32,7 @@ Create GPL track editing altitude trace equation coefficients. Each equation is 
 
 | Method | Algorithm | Smoothness | Overshoot | Continuity | Use Case |
 |--------|-----------|-----------|-----------|------------|----------|
-| **0** | Four Point | ⭐⭐⭐⭐⭐ | ⚠️ High | C¹ | Smooth terrain |
+| **0** | Four Point | ⭐⭐⭐⭐⭐ | ⚠️ Adjustable | C¹ | Smooth terrain |
 | **1** | Monotone | ⭐⭐⭐ | ✅ None | C¹ | Accuracy critical |
 | **2** | Catmull-Rom | ⭐⭐⭐⭐ | ⚠️ Adjustable | C¹ | Fine control |
 | **3** | Limited Slopes | ⭐⭐⭐ | ✅ Minimal | C¹ | Quick processing |
