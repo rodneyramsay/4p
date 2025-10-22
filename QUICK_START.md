@@ -6,7 +6,7 @@
 ./4psi -m 4 alt_mytrack.txt
 ```
 
-This uses the **OPTIMAL method**, which provides maximum smoothness with no overshoot.
+This uses the **Harmonic Mean method**, which provides maximum smoothness with no overshoot.
 
 ---
 
@@ -16,7 +16,7 @@ This uses the **OPTIMAL method**, which provides maximum smoothness with no over
 
 | Method | Command | Best For | Overshoot |
 |--------|---------|----------|-----------|
-| **OPTIMAL** (Recommended) | `-m 4` | All terrain types | ✅ None |
+| **Harmonic Mean** (Recommended) | `-m 4` | All terrain types | ✅ None |
 | Monotone | `-m 1` | Accuracy critical | ✅ None |
 | Catmull-Rom | `-m 2 -t 0.3` | Fine-tuning smoothness | ⚠️ Adjustable |
 | Limited Slopes | `-m 3` | Simple/fast | ⚠️ Minimal |
@@ -28,7 +28,7 @@ This uses the **OPTIMAL method**, which provides maximum smoothness with no over
 
 ### 1. Test with your data
 ```bash
-# OPTIMAL method (recommended)
+# Harmonic Mean method (recommended)
 ./4psi -m 4 alt_mytrack.txt
 
 # Monotone method (alternative)
@@ -43,7 +43,7 @@ This uses the **OPTIMAL method**, which provides maximum smoothness with no over
 
 ### 3. Fine-tune if needed
 ```bash
-# Adjust OPTIMAL method alpha (0.0 = smooth, 1.0 = tight)
+# Adjust Harmonic Mean method alpha (0.0 = smooth, 1.0 = tight)
 ./4psi -m 4 -t 0.7 alt_mytrack.txt   # More smooth
 ./4psi -m 4 -t 0.85 alt_mytrack.txt  # Balanced (default)
 ./4psi -m 4 -t 1.0 alt_mytrack.txt   # Maximum constraint
@@ -79,7 +79,7 @@ Good (monotone):  10m → 20m → 15m  ✅ (stays within bounds)
               1 = Monotone (Fritsch-Carlson)
               2 = Catmull-Rom with tension
               3 = Limited slopes
-              4 = OPTIMAL [DEFAULT]
+              4 = Harmonic Mean [DEFAULT]
 
 -s <factor>   Smoothing factor (default 4.0, 8.0 for method 4)
               Higher = smoother
@@ -92,7 +92,7 @@ Good (monotone):  10m → 20m → 15m  ✅ (stays within bounds)
 
 ### Examples:
 ```bash
-# Default (OPTIMAL, no overshoot)
+# Default (Harmonic Mean, no overshoot)
 ./4psi -m 4 alt_mytrack.txt
 
 # Monotone method

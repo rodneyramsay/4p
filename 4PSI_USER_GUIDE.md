@@ -5,7 +5,7 @@
 ## Quick Start
 
 ```bash
-# RECOMMENDED: Use OPTIMAL method for best results
+# RECOMMENDED: Use Harmonic Mean method for best results
 ./4psi -m 4 alt_mytrack.txt
 
 # View the output
@@ -40,7 +40,7 @@ gnuplot __do_plot_all.txt
 **Characteristics:**
 - ✅ Very smooth curves
 - ⚠️ Can produce overshoot
-- ✅ C² continuity
+- ✅ C¹ continuity
 
 **Use case:** Smooth, gentle terrain where maximum smoothness is desired
 
@@ -111,7 +111,7 @@ gnuplot __do_plot_all.txt
 **Characteristics:**
 - ✅ Simple and fast
 - ✅ Prevents extreme overshoot
-- ✅ C² continuity
+- ✅ C¹ continuity
 - ⚠️ Less sophisticated than other methods
 
 **Use case:** Quick processing when you need basic overshoot prevention
@@ -126,12 +126,12 @@ gnuplot __do_plot_all.txt
 
 ---
 
-### Method 4: OPTIMAL ⭐⭐⭐ RECOMMENDED
+### Method 4: Harmonic Mean ⭐⭐⭐ RECOMMENDED
 
 **Command:** `./4psi -m 4 alt_mytrack.txt`
 
 **Characteristics:**
-- ✅ Maximum smoothness (C² continuity)
+- ✅ Maximum smoothness (C¹ continuity)
 - ✅ Adaptive overshoot prevention
 - ✅ Closed-loop support (wraparound continuity)
 - ✅ Weighted harmonic mean for conservative slopes
@@ -143,12 +143,12 @@ gnuplot __do_plot_all.txt
 - `-s <factor>` - Smoothing factor (default: 8.0, higher = smoother)
 - `-t <alpha>` - Overshoot prevention (0.0-1.0, default: 0.85)
   - `0.0` = Maximum smoothness (may overshoot)
-  - `0.85` = Optimal balance (recommended)
+  - `0.85` = Harmonic Mean balance (recommended)
   - `1.0` = Maximum constraint (guaranteed no overshoot)
 
 **Examples:**
 ```bash
-./4psi -m 4 alt_mytrack.txt                    # Optimal defaults
+./4psi -m 4 alt_mytrack.txt                    # Harmonic Mean defaults
 ./4psi -m 4 -s 10.0 -t 0.9 alt_mytrack.txt     # Extra smooth, tight constraint
 ./4psi -m 4 -s 6.0 -t 0.7 alt_mytrack.txt      # Less smooth, looser constraint
 ```
@@ -201,11 +201,11 @@ f(x) = a*x³ + b*x² + c*x + d
 
 | Method | Smoothness | Overshoot | Continuity | Speed | Best For |
 |--------|-----------|-----------|------------|-------|----------|
-| **0 - Four Point** | ⭐⭐⭐⭐⭐ | ⚠️ High | C² | Fast | Smooth terrain |
+| **0 - Four Point** | ⭐⭐⭐⭐⭐ | ⚠️ High | C¹ | Fast | Smooth terrain |
 | **1 - Monotone** | ⭐⭐⭐ | ✅ None | C¹ | Fast | Accuracy critical |
 | **2 - Catmull-Rom** | ⭐⭐⭐⭐ | ⚠️ Adjustable | C¹ | Fast | Fine control needed |
-| **3 - Limited** | ⭐⭐⭐ | ✅ Minimal | C² | Fast | Quick processing |
-| **4 - OPTIMAL** ⭐ | ⭐⭐⭐⭐⭐ | ✅ None | C² | Medium | **All tracks** |
+| **3 - Limited** | ⭐⭐⭐ | ✅ Minimal | C¹ | Fast | Quick processing |
+| **4 - Harmonic Mean** ⭐ | ⭐⭐⭐⭐⭐ | ✅ None | C¹ | Medium | **All tracks** |
 
 ## Common Use Cases
 
@@ -233,7 +233,7 @@ f(x) = a*x³ + b*x² + c*x + d
 mv __gtk_csv.TXT __gtk_csv_monotone.TXT
 
 ./4psi -m 4 alt_mytrack.txt
-mv __gtk_csv.TXT __gtk_csv_optimal.TXT
+mv __gtk_csv.TXT __gtk_csv_harmonic mean.TXT
 
 # Compare the results
 ```
@@ -255,7 +255,7 @@ mv __gtk_csv.TXT __gtk_csv_optimal.TXT
 ```
 
 ### "Not smooth enough, visible kinks"
-**Solution:** Use OPTIMAL method with higher smoothing
+**Solution:** Use Harmonic Mean method with higher smoothing
 ```bash
 ./4psi -m 4 -s 12.0 alt_mytrack.txt
 ```
@@ -270,7 +270,7 @@ make alt_mytrack.alt  # Generates comparison plots
 
 ### Closed-Loop Tracks
 
-Method 4 (OPTIMAL) automatically detects and handles closed-loop tracks (like race circuits) by ensuring slope continuity at the wraparound point.
+Method 4 (Harmonic Mean) automatically detects and handles closed-loop tracks (like race circuits) by ensuring slope continuity at the wraparound point.
 
 **No special flags needed** - it just works!
 
@@ -295,22 +295,15 @@ make clean
 
 ## Technical Details
 
-### C² Continuity (Methods 0, 3, 4)
+### C¹ Continuity (All Methods)
 
-The altitude function and its first two derivatives are continuous at all junction points:
-- `f(x)` is continuous (position)
-- `f'(x)` is continuous (slope/gradient)
-- `f''(x)` is continuous (curvature)
-
-This ensures visually smooth curves without abrupt changes in curvature.
-
-### C¹ Continuity (Methods 1, 2)
-
-Only the function and its first derivative are continuous:
+All methods provide C¹ continuity - the function and its first derivative are continuous:
 - `f(x)` is continuous (position)
 - `f'(x)` is continuous (slope/gradient)
 
-May show slight "kinks" where curvature changes abruptly.
+This ensures smooth curves without sharp corners or visible kinks at section boundaries.
+
+**Note:** None of the methods guarantee C² continuity (continuous curvature). While curvature changes at boundaries are typically small and not visually obvious, they are not mathematically zero.
 
 ### Overshoot Prevention
 
@@ -347,7 +340,7 @@ display pulse_sections.png
 display zoom_junction.png
 ```
 
-### Example 3: Fine-tune OPTIMAL method
+### Example 3: Fine-tune Harmonic Mean method
 ```bash
 # Try different alpha values
 ./4psi -m 4 -t 0.7 alt_mytrack.txt   # More smooth
@@ -382,15 +375,15 @@ less README.md
 **Current Version:** 2.0  
 **Methods Available:** 5 (0-4)  
 **Default Method:** 1 (Monotone)  
-**Recommended Method:** 4 (OPTIMAL) ⭐
+**Recommended Method:** 4 (Harmonic Mean) ⭐
 
 ## See Also
 
 - `README.md` - Project overview
-- `OPTIMAL_ALGORITHM.md` - Technical details of method 4
+- `Harmonic Mean_ALGORITHM.md` - Technical details of method 4
 - `Makefile` - Automated workflows
-- `compare_optimal.pl` - Method comparison tool
+- `compare_harmonic mean.pl` - Method comparison tool
 
 ---
 
-**Pro Tip:** When in doubt, use method 4 (OPTIMAL) with default settings. It provides the best balance of smoothness and accuracy for most use cases.
+**Pro Tip:** When in doubt, use method 4 (Harmonic Mean) with default settings. It provides the best balance of smoothness and accuracy for most use cases.

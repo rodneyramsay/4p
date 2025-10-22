@@ -36,7 +36,7 @@ my %methods = (
    0 => {name => "Original", file => "__do_plot_method0.txt", color => "#FF0000"},
    1 => {name => "Monotone", file => "__do_plot_method1.txt", color => "#0000FF"},
    2 => {name => "Catmull-Rom", file => "__do_plot_method2.txt", color => "#00AA00"},
-   4 => {name => "OPTIMAL", file => "__do_plot_optimal.txt", color => "#AA00AA"}
+   4 => {name => "Harmonic Mean", file => "__do_plot_harmonic_mean.txt", color => "#AA00AA"}
 );
 
 foreach my $num (keys %methods) {

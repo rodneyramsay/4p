@@ -21,7 +21,7 @@ Create GPL track editing altitude trace equation coefficients. Each equation is 
 # Method 3: Limited slopes (fast, minimal overshoot)
 ./4psi -m 3 alt_mytrack.txt
 
-# Method 4: OPTIMAL (RECOMMENDED - maximum smoothness, optmized overshoot, C² continuity)
+# Method 4: Harmonic Mean (RECOMMENDED - maximum smoothness, optimized overshoot, C¹ continuity)
 ./4psi -m 4 alt_mytrack.txt
 
 # Generate all comparison plots
@@ -32,13 +32,13 @@ Create GPL track editing altitude trace equation coefficients. Each equation is 
 
 | Method | Algorithm | Smoothness | Overshoot | Continuity | Use Case |
 |--------|-----------|-----------|-----------|------------|----------|
-| **0** | Four Point | ⭐⭐⭐⭐⭐ | ⚠️ High | C² | Smooth terrain |
+| **0** | Four Point | ⭐⭐⭐⭐⭐ | ⚠️ High | C¹ | Smooth terrain |
 | **1** | Monotone | ⭐⭐⭐ | ✅ None | C¹ | Accuracy critical |
 | **2** | Catmull-Rom | ⭐⭐⭐⭐ | ⚠️ Adjustable | C¹ | Fine control |
-| **3** | Limited Slopes | ⭐⭐⭐ | ✅ Minimal | C² | Quick processing |
-| **4** | OPTIMAL | ⭐⭐⭐⭐⭐ | ✅ Controlled | C² | **Recommended** ⭐ |
+| **3** | Limited Slopes | ⭐⭐⭐ | ✅ Minimal | C¹ | Quick processing |
+| **4** | Harmonic Mean | ⭐⭐⭐⭐⭐ | ✅ Controlled | C¹ | **Recommended** ⭐ |
 
-📖 **See [OPTIMAL_ALGORITHM.md](OPTIMAL_ALGORITHM.md) for technical details**  
+📖 **See [HARMONIC_MEAN_ALGORITHM.md](HARMONIC_MEAN_ALGORITHM.md) for technical details**  
 📖 **See [SOLUTION_SUMMARY.md](SOLUTION_SUMMARY.md) for complete documentation**  
 📖 **See [QUICK_TEST.md](QUICK_TEST.md) for testing guide**
 
@@ -48,13 +48,13 @@ Create GPL track editing altitude trace equation coefficients. Each equation is 
 
 ![Pulse Sections Comparison](pulse_sections.png)
 
-This visualization shows how different smoothing methods handle a challenging "pulse" test case with sharp transitions. The OPTIMAL method (green) provides smooth curves while avoiding overshoot, compared to other methods.
+This visualization shows how different smoothing methods handle a challenging "pulse" test case with sharp transitions. The Harmonic Mean method (green) provides smooth curves while avoiding overshoot, compared to other methods.
 
 ### Junction Detail - Continuity
 
 ![Junction Zoom](zoom_junction.png)
 
-Close-up view of section junctions showing how the OPTIMAL method maintains smooth C² continuity (continuous position, slope, and curvature) at transition points between sections.
+Close-up view of section junctions showing how the Harmonic Mean method maintains smooth C¹ continuity (continuous position and slope) at transition points between sections.
 
 ---
 
@@ -63,7 +63,7 @@ Close-up view of section junctions showing how the OPTIMAL method maintains smoo
 To process a new track altitude file:
 
 ```bash
-# 1. Run 4psi on your altitude file (uses OPTIMAL method by default)
+# 1. Run 4psi on your altitude file (uses Harmonic Mean method by default)
 ./4psi alt_newtrack.txt
 
 # 2. Visualize the results

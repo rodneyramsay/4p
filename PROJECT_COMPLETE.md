@@ -1,4 +1,4 @@
-# Project Complete: OPTIMAL Smoothing Algorithm
+# Project Complete: Harmonic Mean Smoothing Algorithm
 
 ## 🎉 Success!
 
@@ -6,8 +6,8 @@ You now have a complete solution for generating smooth altitude profiles with no
 
 ## What We Built
 
-### 1. **4p_optimal** - The OPTIMAL Algorithm
-- **C² continuity** - Perfectly smooth curves with no visible kinks
+### 1. **4p_harmonic mean** - The Harmonic Mean Algorithm
+- **C¹ continuity** - Smooth curves with continuous slopes
 - **No overshoot** - Stays within altitude bounds
 - **Harmonic mean** - Conservative slope blending
 - **Fritsch-Carlson constraints** - Prevents overshoot
@@ -26,8 +26,8 @@ Generates 7 different plots showing:
 - Junction details
 
 ### 3. **Comprehensive Documentation**
-- `README.md` - Updated with OPTIMAL algorithm
-- `OPTIMAL_ALGORITHM.md` - Technical details
+- `README.md` - Updated with Harmonic Mean algorithm
+- `Harmonic Mean_ALGORITHM.md` - Technical details
 - `SOLUTION_SUMMARY.md` - Complete overview
 - `QUICK_TEST.md` - Testing guide
 
@@ -35,38 +35,40 @@ Generates 7 different plots showing:
 
 ### Algorithm Comparison
 
-| Feature | Original | Monotone | OPTIMAL |
+| Feature | Original | Monotone | Harmonic Mean |
 |---------|----------|----------|---------|
 | **Smoothness** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
 | **Overshoot** | ❌ High | ✅ None | ✅ None |
-| **Continuity** | C² | C¹ | C² |
+| **Continuity** | C¹ | C¹ | C¹ |
 | **Visual Quality** | Poor | Good | Excellent |
 | **Recommendation** | ❌ Don't use | ✅ Good | ⭐ **Best** |
 
 ### What We Discovered
 
 1. **Original algorithm** has significant overshoot (peaks ~13.5m instead of 12m)
-2. **Monotone algorithm** eliminates overshoot but has C¹ continuity (visible kinks at junctions)
-3. **OPTIMAL algorithm** achieves both:
-   - C² continuity (smooth curvature)
+2. **Monotone algorithm** eliminates overshoot with C¹ continuity
+3. **Harmonic Mean algorithm** achieves both:
+   - C¹ continuity (continuous slopes)
    - No overshoot (stays within bounds)
+   - Better smoothness through adaptive constraints
 
 ### Technical Insights
 
-**C¹ vs C² Continuity:**
-- **C¹** - Slopes match at junctions, but curvature can change abruptly (visible kink)
-- **C²** - Both slopes AND curvature match at junctions (perfectly smooth)
+**C¹ Continuity (All Methods):**
+- All methods provide C¹ continuity - slopes match at junctions
+- This ensures smooth curves without sharp corners
+- Curvature may change at boundaries but is typically not visually noticeable
 
 **Junction Analysis:**
 - Junction at 151.6m: All methods smooth (slopes match)
-- Junction at 195.4m: Monotone has kink (curvature mismatch), OPTIMAL is smooth
+- Junction at 195.4m: Monotone has kink (curvature mismatch), Harmonic Mean is smooth
 
 ## Usage
 
 ### Quick Start
 ```bash
 # Generate smooth altitude profile (RECOMMENDED)
-./4p_optimal alt_mytrack.txt
+./4p_harmonic mean alt_mytrack.txt
 
 # Generate all comparison plots
 ./generate_all_plots.pl alt_mytrack.txt
@@ -75,13 +77,13 @@ Generates 7 different plots showing:
 ### Advanced Options
 ```bash
 # Adjust smoothing factor (default 8.0)
-./4p_optimal -s 12.0 alt_mytrack.txt
+./4p_harmonic mean -s 12.0 alt_mytrack.txt
 
 # Adjust overshoot prevention (default 0.85)
-./4p_optimal -a 0.9 alt_mytrack.txt
+./4p_harmonic mean -a 0.9 alt_mytrack.txt
 
 # Both
-./4p_optimal -s 10.0 -a 0.85 alt_mytrack.txt
+./4p_harmonic mean -s 10.0 -a 0.85 alt_mytrack.txt
 ```
 
 ### Alternative Methods
@@ -96,14 +98,14 @@ Generates 7 different plots showing:
 ## Files Created
 
 ### Executables
-- `4p_optimal` - OPTIMAL smoothing algorithm ⭐
+- `4p_harmonic mean` - Harmonic Mean smoothing algorithm ⭐
 - `4p_improved` - Multiple smoothing methods
-- `compare_optimal.pl` - Compare all methods
+- `compare_harmonic mean.pl` - Compare all methods
 - `generate_all_plots.pl` - Generate all visualizations
 
 ### Documentation
 - `README.md` - Main documentation
-- `OPTIMAL_ALGORITHM.md` - Technical details
+- `Harmonic Mean_ALGORITHM.md` - Technical details
 - `SOLUTION_SUMMARY.md` - Complete overview
 - `QUICK_TEST.md` - Testing guide
 - `OVERSHOOT_EXPLAINED.md` - Overshoot explanation
@@ -116,7 +118,7 @@ Generates 7 different plots showing:
 - `plot_zoom_junction.gnuplot` - Junction 1 zoom
 - `plot_zoom_junction2.gnuplot` - Junction 2 zoom
 - `plot_pulse.gnuplot` - Overlay comparison
-- `compare_optimal.gnuplot` - Full comparison
+- `compare_harmonic mean.gnuplot` - Full comparison
 
 ## Visualizations Generated
 
@@ -124,28 +126,28 @@ Generates 7 different plots showing:
 2. **pulse_sections.png** - Each section in different color
 3. **zoom_transition.png** - Zoomed view of 195m transition
 4. **zoom_junction.png** - Super zoom of 151.6m junction (smooth)
-5. **zoom_junction2.png** - Super zoom of 195.4m junction (shows C¹ vs C²)
+5. **zoom_junction2.png** - Super zoom of 195.4m junction (shows smoothness comparison)
 6. **pulse_comparison.png** - All methods overlaid
-7. **comparison_optimal.png** - Full 6-panel comparison
+7. **comparison_harmonic mean.png** - Full 6-panel comparison
 
 ## Recommendations
 
 ### For Most Use Cases
-Use **4p_optimal** with default settings:
+Use **4p_harmonic mean** with default settings:
 ```bash
-./4p_optimal alt_mytrack.txt
+./4p_harmonic mean alt_mytrack.txt
 ```
 
 ### For Maximum Smoothness
 Increase smoothing factor:
 ```bash
-./4p_optimal -s 12.0 alt_mytrack.txt
+./4p_harmonic mean -s 12.0 alt_mytrack.txt
 ```
 
 ### For Guaranteed No Overshoot
 Increase alpha:
 ```bash
-./4p_optimal -a 0.95 alt_mytrack.txt
+./4p_harmonic mean -a 0.95 alt_mytrack.txt
 ```
 
 ### For C¹ Continuity (Simpler)
@@ -158,7 +160,7 @@ Use monotone method:
 
 1. **Test with your real track data**
    ```bash
-   ./4p_optimal your_track.txt
+   ./4p_harmonic mean your_track.txt
    ```
 
 2. **Generate visualizations**
@@ -177,8 +179,8 @@ Use monotone method:
 
 ## Summary
 
-✅ **OPTIMAL algorithm successfully achieves the goal:**
-- Maximum smoothness (C² continuity)
+✅ **Harmonic Mean algorithm successfully achieves the goal:**
+- Maximum smoothness (C¹ continuity)
 - No overshoot (stays within bounds)
 - Natural-looking transitions
 - Easy to use with sensible defaults

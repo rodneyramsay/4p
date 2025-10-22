@@ -11,7 +11,7 @@
   - `-m 1`: Monotone (Fritsch-Carlson)
   - `-m 2`: Catmull-Rom with tension
   - `-m 3`: Limited slopes (clamped)
-  - `-m 4`: OPTIMAL - **RECOMMENDED**
+  - `-m 4`: Harmonic Mean - **RECOMMENDED**
 - **Options:**
   - `-s <factor>`: Smoothing factor (default 4.0, 8.0 for method 4)
   - `-t <value>`: Tension (method 2) or alpha (method 4, default 0.85)
@@ -30,10 +30,10 @@
   - Generates individual plot scripts
   - Creates comparison visualizations
 
-### `compare_optimal.pl`
+### `compare_harmonic mean.pl`
 - **Type:** Perl script
-- **Purpose:** Compare OPTIMAL method with other methods
-- **Usage:** `./compare_optimal.pl <input_file>`
+- **Purpose:** Compare Harmonic Mean method with other methods
+- **Usage:** `./compare_harmonic mean.pl <input_file>`
 
 ### `split_section_test.pl`
 - **Type:** Perl script
@@ -54,7 +54,7 @@
 - **Purpose:** Main project documentation
 - **Content:**
   - Project overview
-  - OPTIMAL smoothing algorithm
+  - Harmonic Mean smoothing algorithm
   - Section splitting test
   - Input format specification
   - Mathematical equations
@@ -78,8 +78,8 @@
   - Troubleshooting
 - **Audience:** Users who want to get started quickly
 
-### `OPTIMAL_ALGORITHM.md`
-- **Purpose:** Technical documentation of OPTIMAL method (method 4)
+### `Harmonic Mean_ALGORITHM.md`
+- **Purpose:** Technical documentation of Harmonic Mean method (method 4)
 - **Content:**
   - Algorithm details
   - Mathematical background
@@ -165,8 +165,8 @@
 - **Usage:** `gnuplot __do_plot_all.txt`
 
 ### Comparison Output Files (from generate_all_plots.pl)
-- `__do_plot_method0.txt` through `__do_plot_optimal.txt`
-- `__gtk_csv_method0.TXT` through `__gtk_csv_optimal.TXT`
+- `__do_plot_method0.txt` through `__do_plot_harmonic mean.txt`
+- `__gtk_csv_method0.TXT` through `__gtk_csv_harmonic mean.TXT`
 - `pulse_sections.png`
 - `zoom_junction.png`, `zoom_junction2.png`, `zoom_transition.png`
 
@@ -221,7 +221,7 @@
 │
 ├── Helper Scripts
 │   ├── generate_all_plots.pl
-│   ├── compare_optimal.pl
+│   ├── compare_harmonic mean.pl
 │   ├── split_section_test.pl
 │   └── x_kml
 │
@@ -229,7 +229,7 @@
 │   ├── README.md
 │   ├── 4PSI_USER_GUIDE.md
 │   ├── QUICK_START.md
-│   ├── OPTIMAL_ALGORITHM.md
+│   ├── Harmonic Mean_ALGORITHM.md
 │   ├── SMOOTHING_METHODS.md
 │   ├── OVERSHOOT_EXPLAINED.md
 │   ├── SOLUTION_SUMMARY.md
@@ -301,7 +301,7 @@ gnuplot split_section_plot.gnuplot
 
 ### Helper Scripts
 - `generate_all_plots.pl` - Method comparison
-- `compare_optimal.pl` - OPTIMAL method comparison
+- `compare_harmonic mean.pl` - Harmonic Mean method comparison
 - `split_section_test.pl` - Section splitting test
 - `x_kml` - KML altitude extraction
 
@@ -340,7 +340,7 @@ gnuplot split_section_plot.gnuplot
 
 ### Current Version
 - 5 smoothing methods (0-4)
-- OPTIMAL method (method 4) - recommended
+- Harmonic Mean method (method 4) - recommended
 - Fritsch-Carlson monotone interpolation
 - Catmull-Rom with tension
 - Section splitting capability

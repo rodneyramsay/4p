@@ -1,94 +1,210 @@
 #!/usr/bin/perl
 
-# Script to compare different smoothing methods
-# Generates plots comparing original vs improved methods
-
 use strict;
 use warnings;
 
-my $input_file = $ARGV[0] || "alt_mytrack.txt";
+# Script to compare all methods including the Harmonic Mean algorithm
+
+my $input_file = $ARGV[0];
+
+unless($input_file) {
+   print "Usage: compare_methods.pl <input_file>\n";
+   print "Compares all smoothing methods including the Harmonic Mean algorithm.\n";
+   exit(1);
+}
 
 unless(-f $input_file) {
-   die "Usage: $0 <input_file>\n";
+   die "Error: Input file '$input_file' not found\n";
 }
 
-print "Comparing smoothing methods for: $input_file\n\n";
+print "=" x 70 . "\n";
+print "COMPARING ALL SMOOTHING METHODS\n";
+print "=" x 70 . "\n\n";
 
-# Run each method with different smoothing factors
+# Method 0: Original (baseline)
+print "Running Method 0: Original (baseline)...\n";
+system("./4psi -m 0 $input_file > /dev/null 2>&1");
+system("mv __do_plot_all.txt __do_plot_method0.txt");
+system("mv __gtk_csv.TXT __gtk_csv_method0.TXT");
+print "  ✓ Complete\n\n";
+
+# Method 1: Monotone (Fritsch-Carlson)
+print "Running Method 1: Monotone (no overshoot, less smooth)...\n";
+system("./4psi -m 1 $input_file > /dev/null 2>&1");
+system("mv __do_plot_all.txt __do_plot_method1.txt");
+system("mv __gtk_csv.TXT __gtk_csv_method1.TXT");
+print "  ✓ Complete\n\n";
+
+# Method 2: Catmull-Rom (tension = 0.3)
+print "Running Method 2: Catmull-Rom (tension=0.3)...\n";
+system("./4psi -m 2 -t 0.3 $input_file > /dev/null 2>&1");
+system("mv __do_plot_all.txt __do_plot_method2.txt");
+system("mv __gtk_csv.TXT __gtk_csv_method2.TXT");
+print "  ✓ Complete\n\n";
+
+# Method 3: Limited slopes
+print "Running Method 3: Limited slopes...\n";
+system("./4psi -m 3 $input_file > /dev/null 2>&1");
+system("mv __do_plot_all.txt __do_plot_method3.txt");
+system("mv __gtk_csv.TXT __gtk_csv_method3.TXT");
+print "  ✓ Complete\n\n";
+
+# Method 4: Harmonic Mean (maximum smoothness, controlled overshoot)
+print "Running Method 4: Harmonic Mean (max smoothness, controlled overshoot)...\n";
+system("./4psi -m 4 $input_file > /dev/null 2>&1");
+system("mv __do_plot_all.txt __do_plot_method4.txt");
+system("mv __gtk_csv.TXT __gtk_csv_method4.TXT");
+print "  ✓ Complete\n\n";
+
+# Create comprehensive comparison gnuplot script
+open(my $gp, '>', 'compare_methods.gnuplot') or die "Cannot create gnuplot script: $!\n";
+
+print $gp <<'GNUPLOT_HEADER';
+# Comprehensive comparison of all smoothing methods
+set terminal pngcairo size 1800,1200 enhanced font 'Arial,10'
+set output 'comparison_methods.png'
+
+set multiplot layout 3,2 title "Altitude Smoothing Methods Comparison" font ",14"
+
+# Common settings
+set grid
+set key top left
+
+GNUPLOT_HEADER
+
+# Read the plot files to extract function definitions and plot commands
 my @methods = (
-   {name => "Original (s=4)", cmd => "perl ./4p -s 4.0 $input_file > output_original_s4.txt 2>&1", plot => "__do_plot_all_orig_s4.txt", csv => "__gtk_csv_orig_s4.TXT"},
-   {name => "Original (s=8)", cmd => "perl ./4p -s 8.0 $input_file > output_original_s8.txt 2>&1", plot => "__do_plot_all_orig_s8.txt", csv => "__gtk_csv_orig_s8.TXT"},
-   {name => "Original (s=16)", cmd => "perl ./4p -s 16.0 $input_file > output_original_s16.txt 2>&1", plot => "__do_plot_all_orig_s16.txt", csv => "__gtk_csv_orig_s16.TXT"},
-   {name => "Monotone (s=4)", cmd => "perl ./4p_improved -m 1 -s 4.0 $input_file > output_monotone_s4.txt 2>&1", plot => "__do_plot_all_monotone_s4.txt", csv => "__gtk_csv_monotone_s4.TXT"},
-   {name => "Monotone (s=8)", cmd => "perl ./4p_improved -m 1 -s 8.0 $input_file > output_monotone_s8.txt 2>&1", plot => "__do_plot_all_monotone_s8.txt", csv => "__gtk_csv_monotone_s8.TXT"},
-   {name => "Monotone (s=16)", cmd => "perl ./4p_improved -m 1 -s 16.0 $input_file > output_monotone_s16.txt 2>&1", plot => "__do_plot_all_monotone_s16.txt", csv => "__gtk_csv_monotone_s16.TXT"},
-   {name => "Monotone (s=32)", cmd => "perl ./4p_improved -m 1 -s 32.0 $input_file > output_monotone_s32.txt 2>&1", plot => "__do_plot_all_monotone_s32.txt", csv => "__gtk_csv_monotone_s32.TXT"},
-   {name => "Limited (s=4)", cmd => "perl ./4p_improved -m 3 -s 4.0 $input_file > output_limited_s4.txt 2>&1", plot => "__do_plot_all_limited_s4.txt", csv => "__gtk_csv_limited_s4.TXT"},
-   {name => "Limited (s=16)", cmd => "perl ./4p_improved -m 3 -s 16.0 $input_file > output_limited_s16.txt 2>&1", plot => "__do_plot_all_limited_s16.txt", csv => "__gtk_csv_limited_s16.TXT"},
+   {num => 0, name => "Original (Overshoot)", file => "__do_plot_method0.txt", color => "red"},
+   {num => 1, name => "Monotone (No Overshoot)", file => "__do_plot_method1.txt", color => "blue"},
+   {num => 2, name => "Catmull-Rom (t=0.3)", file => "__do_plot_method2.txt", color => "green"},
+   {num => 3, name => "Limited Slopes", file => "__do_plot_method3.txt", color => "orange"},
+   {num => 4, name => "Harmonic Mean (Smooth+No Overshoot)", file => "__do_plot_method4.txt", color => "purple"}
 );
 
+# Extract functions and plot commands from each method
 foreach my $method (@methods) {
-   print "Running $method->{name} method...\n";
-   system($method->{cmd});
+   open(my $fh, '<', $method->{file}) or next;
+   my @funcs;
+   my $xrange;
+   my @plot_parts;
    
-   # Rename output files to avoid overwriting
-   if(-f "__do_plot_all.txt") {
-      system("cp __do_plot_all.txt $method->{plot}");
-   }
-   if(-f "__gtk_csv.TXT") {
-      system("cp __gtk_csv.TXT $method->{csv}");
-   }
-}
-
-# Create combined gnuplot script
-open(my $fh, ">", "compare_all.gnuplot") or die "Cannot create compare_all.gnuplot: $!\n";
-
-print $fh "set terminal png size 2400,1800\n";
-print $fh "set output 'comparison.png'\n";
-print $fh "set multiplot layout 3,3 title 'Altitude Smoothing Method Comparison'\n\n";
-
-foreach my $method (@methods) {
-   print $fh "# $method->{name}\n";
-   print $fh "set title '$method->{name}'\n";
-   
-   if(-f $method->{plot}) {
-      # Read and include function definitions AND plot commands
-      open(my $plot_fh, "<", $method->{plot}) or next;
-      my $in_plot = 0;
-      while(my $line = <$plot_fh>) {
-         # Include function definitions (lines starting with f_)
-         if($line =~ /^f_/) {
-            print $fh $line;
-         }
-         # Include set xrange
-         if($line =~ /^set xrange/) {
-            print $fh $line;
-         }
-         # Track when we hit plot command
-         if($line =~ /^plot/) {
-            $in_plot = 1;
-         }
-         # Include plot commands but skip pause
-         if($in_plot && $line !~ /pause/) {
-            print $fh $line;
-         }
-         if($line =~ /pause/) {
-            last;
-         }
+   while(<$fh>) {
+      chomp;
+      if(/^f_\d+_\d+\(x\) = /) {
+         push @funcs, $_;
       }
-      close($plot_fh);
+      elsif(/^set xrange/) {
+         $xrange = $_;
+      }
+      elsif(/^\s*\[([0-9.:]+)\]\s+(f_\d+_\d+\(x-[0-9.]+\))/) {
+         # Extract range and function call
+         push @plot_parts, "[$1] $2";
+      }
    }
-   print $fh "\n";
+   close($fh);
+   
+   $method->{functions} = \@funcs;
+   $method->{xrange} = $xrange;
+   $method->{plot_parts} = \@plot_parts;
 }
 
-print $fh "unset multiplot\n";
-close($fh);
-
-print "\nComparison complete!\n";
-print "Generated files:\n";
+# Plot each method in its own subplot
 foreach my $method (@methods) {
-   print "  - $method->{plot}\n";
-   print "  - $method->{csv}\n";
+   # Skip if no data was loaded
+   next unless $method->{plot_parts} && @{$method->{plot_parts}};
+   
+   print $gp "\n# Method $method->{num}: $method->{name}\n";
+   print $gp "set title \"Method $method->{num}: $method->{name}\"\n";
+   print $gp "set xlabel \"Distance (m)\"\n";
+   print $gp "set ylabel \"Altitude (m)\"\n";
+   print $gp $method->{xrange} if $method->{xrange};
+   print $gp "\n";
+   
+   # Write function definitions
+   foreach my $func (@{$method->{functions}}) {
+      print $gp $func . "\n";
+   }
+   print $gp "\n";
+   
+   # Create plot command with proper ranges
+   print $gp "plot ";
+   my $first = 1;
+   foreach my $part (@{$method->{plot_parts}}) {
+      print $gp ", " unless $first;
+      $first = 0;
+      print $gp "$part with lines lw 2 lc rgb \"$method->{color}\" notitle";
+   }
+   print $gp "\n";
 }
-print "\nTo visualize: gnuplot compare_all.gnuplot\n";
-print "This will create comparison.png with all methods side-by-side\n";
+
+# Comparison plot - overlay all methods
+print $gp "\n# Overlay comparison\n";
+print $gp "set title \"All Methods Overlaid\"\n";
+print $gp "set xlabel \"Distance (m)\"\n";
+print $gp "set ylabel \"Altitude (m)\"\n";
+# Find first method with xrange
+foreach my $m (@methods) {
+   if($m->{xrange}) {
+      print $gp $m->{xrange};
+      last;
+   }
+}
+print $gp "\n";
+
+# Write all function definitions with unique names
+foreach my $method (@methods) {
+   next unless $method->{functions};
+   foreach my $func (@{$method->{functions}}) {
+      my $newfunc = $func;
+      $newfunc =~ s/^f_/f$method->{num}_/;
+      print $gp $newfunc . "\n";
+   }
+}
+print $gp "\n";
+
+# Create overlay plot with proper ranges
+print $gp "plot ";
+my $first = 1;
+foreach my $method (@methods) {
+   next unless $method->{plot_parts} && @{$method->{plot_parts}};
+   foreach my $part (@{$method->{plot_parts}}) {
+      my $newpart = $part;
+      $newpart =~ s/f_/f$method->{num}_/;
+      print $gp ", " unless $first;
+      $first = 0;
+      print $gp "$newpart with lines lw 2 lc rgb \"$method->{color}\"";
+      if($part eq $method->{plot_parts}->[0]) {
+         # Add title only for first segment
+         print $gp " title \"$method->{name}\"";
+      } else {
+         print $gp " notitle";
+      }
+   }
+}
+print $gp "\n";
+
+print $gp "\nunset multiplot\n";
+close($gp);
+
+print "=" x 70 . "\n";
+print "COMPARISON COMPLETE\n";
+print "=" x 70 . "\n\n";
+
+print "Generated files:\n";
+print "  - comparison_harmonic_mean.gnuplot (gnuplot script)\n";
+print "  - __do_plot_method0.txt (original)\n";
+print "  - __do_plot_method1.txt (monotone)\n";
+print "  - __do_plot_method2.txt (catmull-rom)\n";
+print "  - __do_plot_method3.txt (limited)\n";
+print "  - __do_plot_harmonic_mean.txt (Harmonic Mean)\n\n";
+
+print "To view the comparison:\n";
+print "  gnuplot compare_methods.gnuplot\n";
+print "  (view comparison_harmonic_mean.png)\n\n";
+
+print "Method Summary:\n";
+print "  0: Original       - Smooth but overshoots\n";
+print "  1: Monotone       - No overshoot but less smooth\n";
+print "  2: Catmull-Rom    - Balanced with tension control\n";
+print "  3: Limited        - Simple constraint-based\n";
+print "  4: Harmonic Mean        - Maximum smoothness + harmonic_mean overshoot ⭐\n\n";

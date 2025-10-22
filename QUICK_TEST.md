@@ -1,4 +1,4 @@
-# Quick Test Guide for Optimal Algorithm
+# Quick Test Guide for Harmonic Mean Algorithm
 
 ## Quick Comparison Test
 
@@ -13,9 +13,9 @@ mv __gtk_csv.TXT __gtk_csv_OLD.TXT
 ./4psi -m 1 alt_mytrack.txt > /dev/null 2>&1
 mv __gtk_csv.TXT __gtk_csv_MONOTONE.TXT
 
-# 3. NEW: Optimal algorithm (smooth + no overshoot)
+# 3. NEW: Harmonic Mean algorithm (smooth + no overshoot)
 ./4psi -m 4 alt_mytrack.txt > /dev/null 2>&1
-mv __gtk_csv.TXT __gtk_csv_OPTIMAL.TXT
+mv __gtk_csv.TXT __gtk_csv_Harmonic Mean.TXT
 
 echo "✓ All three algorithms completed"
 echo "Compare the output files to see the differences"
@@ -25,11 +25,11 @@ echo "Compare the output files to see the differences"
 
 ```bash
 # Run comprehensive comparison with all methods
-./compare_optimal.pl alt_mytrack.txt
-gnuplot compare_optimal.gnuplot
+./compare_harmonic mean.pl alt_mytrack.txt
+gnuplot compare_harmonic mean.gnuplot
 
 # View the comparison image
-# (comparison_optimal.png will show all 5 methods side-by-side)
+# (comparison_harmonic mean.png will show all 5 methods side-by-side)
 ```
 
 ## Test Different Alpha Values
@@ -43,7 +43,7 @@ mv __gtk_csv.TXT __gtk_csv_alpha_0.5.TXT
 ./4psi -m 4 -t 0.75 alt_mytrack.txt
 mv __gtk_csv.TXT __gtk_csv_alpha_0.75.TXT
 
-# Near-optimal (default)
+# Near-harmonic mean (default)
 ./4psi -m 4 -t 0.85 alt_mytrack.txt
 mv __gtk_csv.TXT __gtk_csv_alpha_0.85.TXT
 
@@ -64,8 +64,8 @@ mv __gtk_csv.TXT __gtk_csv_alpha_1.0.TXT
 - **Overshoot**: ✅ None (guaranteed)
 - **Use case**: When accuracy is critical
 
-### Method 4 (Optimal)
-- **Smoothness**: ⭐⭐⭐⭐⭐ Excellent (C² continuity)
+### Method 4 (Harmonic Mean)
+- **Smoothness**: ⭐⭐⭐⭐⭐ Excellent (C¹ continuity)
 - **Overshoot**: ✅ None (with default alpha=0.85)
 - **Use case**: **Best choice for most tracks** ⭐
 
@@ -75,16 +75,16 @@ mv __gtk_csv.TXT __gtk_csv_alpha_1.0.TXT
 Compare the coefficients (a, b, c, d) between methods:
 - Old: May have large 'a' coefficients (high curvature)
 - Monotone: Conservative coefficients, sometimes flat (a≈0, b≈0)
-- Optimal: Balanced coefficients with smooth transitions
+- Harmonic Mean: Balanced coefficients with smooth transitions
 
 ### In the Plots
 - **Old**: Smooth curves but may exceed input altitudes
 - **Monotone**: Stays within bounds but may have visible "corners"
-- **Optimal**: Smooth curves that stay within bounds
+- **Harmonic Mean**: Smooth curves that stay within bounds
 
 ## Recommended Workflow
 
-1. **Start with default optimal**:
+1. **Start with default harmonic mean**:
    ```bash
    ./4psi -m 4 alt_mytrack.txt
    ```
@@ -105,19 +105,19 @@ Compare the coefficients (a, b, c, d) between methods:
 
 4. **Compare visually**:
    ```bash
-   ./compare_optimal.pl alt_mytrack.txt
-   gnuplot compare_optimal.gnuplot
+   ./compare_harmonic mean.pl alt_mytrack.txt
+   gnuplot compare_harmonic mean.gnuplot
    ```
 
 ## Success Criteria
 
-The optimal algorithm is working correctly if:
+The harmonic mean algorithm is working correctly if:
 
 ✅ Curves pass through all input altitude points  
 ✅ No visible overshoot (curves stay within altitude bounds)  
 ✅ Smooth transitions (no sharp corners or kinks)  
 ✅ Natural-looking peaks and valleys  
-✅ C² continuity (smooth second derivatives)  
+✅ C¹ continuity (continuous slopes)  
 
 ## Troubleshooting
 

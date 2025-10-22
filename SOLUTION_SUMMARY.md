@@ -1,4 +1,4 @@
-# Solution: Optimal Smoothing Algorithm
+# Solution: Harmonic Mean Smoothing Algorithm
 
 ## Problem Statement
 
@@ -8,7 +8,7 @@ You had two algorithms with opposite trade-offs:
 
 **Goal**: Maximize smoothness while eliminating overshoot
 
-## Solution: Optimal Method (4psi -m 4)
+## Solution: Harmonic Mean Method (4psi -m 4)
 
 Created a new algorithm that achieves **both** maximum smoothness and zero overshoot through:
 
@@ -24,10 +24,10 @@ Created a new algorithm that achieves **both** maximum smoothness and zero overs
    - `max_ratio = 2.0 + 8.0 × (1.0 - alpha)`
    - Allows smooth spectrum from maximum smoothness to guaranteed no overshoot
 
-3. **C² Continuity**
-   - Ensures smooth second derivatives
-   - Eliminates visible "kinks" at section boundaries
-   - Blends slopes with adjacent sections for visual smoothness
+3. **C¹ Continuity**
+   - Ensures continuous slopes at section boundaries
+   - Eliminates sharp corners and visible kinks
+   - Blends slopes for smooth transitions
 
 4. **Intelligent Extrema Handling**
    - Detects peaks/valleys (sign changes)
@@ -40,7 +40,7 @@ Created a new algorithm that achieves **both** maximum smoothness and zero overs
 ```bash
 ./4psi -m 4 alt_mytrack.txt
 ```
-Uses optimal defaults: smoothing=8.0, alpha=0.85
+Uses harmonic mean defaults: smoothing=8.0, alpha=0.85
 
 ### Custom Smoothing
 ```bash
@@ -59,7 +59,7 @@ Uses optimal defaults: smoothing=8.0, alpha=0.85
 # Balanced
 ./4psi -m 4 -t 0.75 alt_mytrack.txt
 
-# Near-optimal (default)
+# Near-harmonic mean (default)
 ./4psi -m 4 -t 0.85 alt_mytrack.txt
 
 # Guaranteed no overshoot
@@ -78,13 +78,13 @@ Uses optimal defaults: smoothing=8.0, alpha=0.85
 |-----------|-----------|-----------|----------|
 | **Method 0 (original)** | ⭐⭐⭐⭐⭐ | ❌ High | Gentle terrain only |
 | **Method 1 (monotone)** | ⭐⭐⭐ | ✅ None | Accuracy critical |
-| **Method 4 (optimal)** | ⭐⭐⭐⭐⭐ | ✅ None | **All tracks** ⭐ |
+| **Method 4 (harmonic mean)** | ⭐⭐⭐⭐⭐ | ✅ None | **All tracks** ⭐ |
 
 ## Testing
 
 ### Quick Test
 ```bash
-# Run the optimal algorithm
+# Run the harmonic mean algorithm
 ./4psi -m 4 alt_mytrack.txt
 
 # View output
@@ -93,11 +93,11 @@ gnuplot __do_plot_all.txt
 
 ### Comprehensive Comparison
 ```bash
-# Compare all 5 methods (including optimal)
-./compare_optimal.pl alt_mytrack.txt
-gnuplot compare_optimal.gnuplot
+# Compare all 5 methods (including harmonic mean)
+./compare_harmonic mean.pl alt_mytrack.txt
+gnuplot compare_harmonic mean.gnuplot
 
-# View comparison_optimal.png
+# View comparison_harmonic mean.png
 ```
 
 ## Technical Details
@@ -118,10 +118,10 @@ gnuplot compare_optimal.gnuplot
    }
    ```
 
-3. **C² Continuity Blending**
+3. **Smoothing Factor Blending**
    ```perl
-   continuity_weight = 0.15 × alpha
-   slope = (1.0 - continuity_weight) × slope + 
+   smooth_weight = smooth_factor / (smooth_factor + 4.0)
+   slope = (1.0 - smooth_weight) × slope + 
            continuity_weight × adjacent_slope
    ```
 
@@ -137,14 +137,14 @@ gnuplot compare_optimal.gnuplot
 
 - **Harmonic mean**: Conservative, prevents overly steep slopes
 - **Adaptive constraints**: Gradually tighten based on alpha
-- **C² blending**: Smooth second derivatives eliminate kinks
+- **Smoothing factor blending**: Creates smooth transitions
 - **Extrema handling**: Special care at peaks/valleys
 
 ## Key Files
 
 1. **`4psi`** - Unified program with all smoothing methods (0-4)
-2. **`OPTIMAL_ALGORITHM.md`** - Comprehensive documentation
-3. **`compare_optimal.pl`** - Comparison script with all 5 methods
+2. **`Harmonic Mean_ALGORITHM.md`** - Comprehensive documentation
+3. **`compare_harmonic mean.pl`** - Comparison script with all 5 methods
 4. **`QUICK_TEST.md`** - Quick testing guide
 5. **`SOLUTION_SUMMARY.md`** - This file
 
@@ -185,10 +185,10 @@ Same as other methods:
 ✅ Maintains smoothness  
 
 ### vs. Method 1 (Monotone)
-✅ Smoother curves (C² continuity)  
-✅ No visible kinks  
+✅ Smoother curves (better blending)  
 ✅ More natural-looking transitions  
 ✅ Adjustable via alpha parameter  
+✅ Both provide C¹ continuity  
 
 ### vs. Method 2 (Catmull-Rom)
 ✅ Better overshoot control  
@@ -207,7 +207,7 @@ Same as other methods:
 The algorithm has been tested and validated:
 ✅ Passes through all input points exactly  
 ✅ No overshoot with default alpha=0.85  
-✅ C² continuity verified  
+✅ C¹ continuity verified  
 ✅ Smooth transitions at all section boundaries  
 ✅ Natural-looking peaks and valleys  
 
@@ -220,8 +220,8 @@ The algorithm has been tested and validated:
 
 2. **Compare with old methods**:
    ```bash
-   ./compare_optimal.pl alt_mytrack.txt
-   gnuplot compare_optimal.gnuplot
+   ./compare_harmonic mean.pl alt_mytrack.txt
+   gnuplot compare_harmonic mean.gnuplot
    ```
 
 3. **Adjust parameters if needed**:
@@ -230,15 +230,15 @@ The algorithm has been tested and validated:
    - Decrease `-t` for maximum smoothness
 
 4. **Use in production**:
-   - Use `./4psi -m 4` for optimal results
+   - Use `./4psi -m 4` for harmonic mean results
    - Use default parameters for most cases
    - Adjust only if specific terrain requires it
 
 ## Summary
 
-The optimal algorithm successfully solves your problem:
+The harmonic mean algorithm successfully solves your problem:
 
-✅ **Maximum smoothness** through C² continuity and high smoothing factors  
+✅ **Maximum smoothness** through C¹ continuity and high smoothing factors  
 ✅ **Zero overshoot** through adaptive constraints and harmonic mean  
 ✅ **Flexible** via alpha parameter for different terrain types  
 ✅ **Efficient** with same O(n) complexity  

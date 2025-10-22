@@ -25,7 +25,7 @@ print "Input file: $input_file\n\n";
 
 # Step 1: Run all methods
 print "Step 1: Running all smoothing methods...\n";
-system("./compare_optimal.pl $input_file");
+system("./compare_methods.pl $input_file");
 print "\n";
 
 # Step 2: Generate gnuplot scripts dynamically
@@ -68,8 +68,8 @@ print "  - __do_plot_method0.txt       - Original method\n";
 print "  - __do_plot_method1.txt       - Monotone method (C¹, no overshoot)\n";
 print "  - __do_plot_method2.txt       - Catmull-Rom method\n";
 print "  - __do_plot_method3.txt       - Limited slopes method\n";
-print "  - __do_plot_optimal.txt       - OPTIMAL method (C², optimal overshoot)\n\n";
+print "  - __do_plot_method4.txt       - Harmonic Mean method (C¹, controlled overshoot)\n\n";
 
 print "Summary:\n";
 print "  Method 1 (Monotone): C¹ continuity, no overshoot\n";
-print "  Method 4 (OPTIMAL):  C² continuity, optimal overshoot ⭐\n\n";
+print "  Method 4 (Harmonic Mean):  C¹ continuity, controlled overshoot \n\n";

@@ -11,12 +11,12 @@ getopts('hs:m:t:');
 # 1 = monotone (Fritsch-Carlson) - prevents overshoot
 # 2 = catmull-rom with tension
 # 3 = limited slopes (clamped)
-# 4 = optimal (C² continuity, adaptive constraints) - DEFAULT
+# 4 = harmonic mean (C¹ continuity, adaptive constraints) - DEFAULT
 if(defined($opt_m)) {
    $method = $opt_m;
 }
 else {
-   $method = 4;  # Default to OPTIMAL
+   $method = 4;  # Default to Harmonic Mean
 }
 
 # Smoothing factor (original method) or tension (catmull-rom)
@@ -44,7 +44,7 @@ if(defined($opt_h)) {
    print "                1 = Monotone (Fritsch-Carlson) - prevents overshoot\n";
    print "                2 = Catmull-Rom with tension\n";
    print "                3 = Limited slopes (clamped)\n";
-   print "                4 = OPTIMAL (C² continuity, adaptive constraints) [default] ⭐\n";
+   print "                4 = Harmonic Mean (C¹ continuity, adaptive constraints) [default] ⭐\n";
    print "  -s <factor>   Smoothing factor (default 4.0, for method 4: 8.0)\n";
    print "  -t <tension>  Tension for Catmull-Rom (0.0-1.0, default 0.0)\n";
    print "                For method 4: alpha parameter (0.0-1.0, default 0.85)\n";
@@ -211,7 +211,7 @@ sub sign {
    return ($x > 0) - ($x < 0);
 }
 
-# Calculate optimal slope with C² continuity and overshoot prevention
+# Calculate harmonic mean slope with C¹ continuity and overshoot prevention
 sub optimal_slope {
    my ($slope_left, $slope_mid, $slope_right, $is_start, $smooth_factor, $alpha) = @_;
    
@@ -428,7 +428,7 @@ foreach $section (0..$num_sections) {
          }
          
       } else {
-         # OPTIMAL method (method == 4, default)
+         # Harmonic Mean method (method == 4, default)
          $SL = optimal_slope($slope_left, $slope_mid, $slope_right, 0, $smooth, $tension);
          
          if($section == 0) {
@@ -499,7 +499,7 @@ foreach $section (0..$num_sections) {
 }
 
 #
-# Second pass for method 4: Recompute section 0 with wraparound slope for closed loop C² continuity
+# Second pass for method 4: Recompute section 0 with wraparound slope for closed loop C¹ continuity
 #
 if($method == 4) {
    foreach $trace (0..$num_traces) {

@@ -1,18 +1,18 @@
-# Optimal Smoothing Algorithm
+# Harmonic Mean Smoothing Algorithm
 
 ## Overview
 
-The **optimal algorithm** (`4p_optimal`) solves the fundamental trade-off between smoothness and overshoot elimination by combining multiple advanced techniques:
+The **Harmonic Mean algorithm** (Method 4) solves the fundamental trade-off between smoothness and overshoot elimination by combining multiple advanced techniques:
 
-1. **C² Continuity** - Ensures smooth second derivatives for visually pleasing curves
+1. **C¹ Continuity** - Ensures continuous slopes for smooth curves
 2. **Weighted Harmonic Mean** - More conservative than arithmetic mean, prevents extreme values
 3. **Adaptive Constraints** - Dynamically adjusts based on local curvature and user preference
 4. **Extrema Handling** - Special treatment at peaks/valleys for smooth transitions
 
 ## The Problem
 
-- **Old algorithm (`4p`)**: Too much overshoot → unrealistic peaks/valleys
-- **Monotone algorithm (`4psi -m 1`)**: No overshoot but not smooth enough → visible "kinks"
+- **Method 0 (Four Point)**: Too much overshoot → unrealistic peaks/valleys
+- **Method 1 (Monotone)**: No overshoot but less smooth
 - **Goal**: Maximum smoothness while eliminating overshoot
 
 ## Key Innovation: Adaptive Constraint System
@@ -24,7 +24,7 @@ The algorithm uses an `alpha` parameter to control the smoothness vs. overshoot 
 ```
 alpha = 0.0  →  Maximum smoothness (may overshoot)
 alpha = 0.5  →  Balanced
-alpha = 0.85 →  Near-optimal (default) ⭐
+alpha = 0.85 →  Recommended (default) ⭐
 alpha = 1.0  →  Guaranteed no overshoot (less smooth)
 ```
 
@@ -38,7 +38,7 @@ max_ratio = 2.0 + 8.0 × (1.0 - alpha)
 Examples:
   alpha = 0.0  →  max_ratio = 10.0  (very smooth)
   alpha = 0.5  →  max_ratio = 6.0   (balanced)
-  alpha = 0.85 →  max_ratio = 3.2   (near-optimal)
+  alpha = 0.85 →  max_ratio = 3.2   (recommended)
   alpha = 1.0  →  max_ratio = 2.0   (tight constraint)
 ```
 
@@ -78,16 +78,16 @@ if(sign(s1) != sign(s2)) {
 
 This creates smooth peaks without overshoot.
 
-### 3. C² Continuity Blending
+### 3. Smoothing Factor Blending
 
-To ensure smooth second derivatives, blend with adjacent slopes:
+To ensure smooth transitions, blend with segment slopes:
 
 ```perl
-continuity_weight = 0.15 × alpha
-slope = (1.0 - continuity_weight) × slope + continuity_weight × adjacent_slope
+smooth_weight = smooth_factor / (smooth_factor + 4.0)
+slope = (1.0 - smooth_weight) × slope + smooth_weight × segment_slope
 ```
 
-This eliminates visual "kinks" at section boundaries.
+This creates smoother transitions at section boundaries.
 
 ### 4. Adaptive Constraint
 
@@ -106,47 +106,47 @@ This prevents overshoot while maintaining smoothness.
 ### Basic Usage (Default Settings)
 
 ```bash
-./4p_optimal alt_mytrack.txt
+./4psi -m 4 alt_mytrack.txt
 ```
 
 Uses default settings:
 - Smoothing factor: 8.0 (high smoothness)
-- Alpha: 0.85 (near-optimal balance)
+- Alpha: 0.85 (recommended balance)
 
 ### Custom Smoothing Factor
 
 ```bash
 # More aggressive smoothing
-./4p_optimal -s 12.0 alt_mytrack.txt
+./4psi -m 4 -s 12.0 alt_mytrack.txt
 
 # Less aggressive smoothing
-./4p_optimal -s 4.0 alt_mytrack.txt
+./4psi -m 4 -s 4.0 alt_mytrack.txt
 ```
 
 ### Custom Alpha (Overshoot Prevention)
 
 ```bash
 # Maximum smoothness (may have slight overshoot)
-./4p_optimal -a 0.5 alt_mytrack.txt
+./4psi -m 4 -t 0.5 alt_mytrack.txt
 
 # Balanced
-./4p_optimal -a 0.75 alt_mytrack.txt
+./4psi -m 4 -t 0.75 alt_mytrack.txt
 
-# Near-optimal (default)
-./4p_optimal -a 0.85 alt_mytrack.txt
+# Recommended (default)
+./4psi -m 4 -t 0.85 alt_mytrack.txt
 
 # Guaranteed no overshoot (less smooth)
-./4p_optimal -a 1.0 alt_mytrack.txt
+./4psi -m 4 -t 1.0 alt_mytrack.txt
 ```
 
 ### Combined Parameters
 
 ```bash
 # Very smooth with moderate overshoot prevention
-./4p_optimal -s 10.0 -a 0.7 alt_mytrack.txt
+./4psi -m 4 -s 10.0 -t 0.7 alt_mytrack.txt
 
 # Tight control with high smoothness
-./4p_optimal -s 12.0 -a 0.9 alt_mytrack.txt
+./4psi -m 4 -s 12.0 -t 0.9 alt_mytrack.txt
 ```
 
 ## Comparison with Other Methods
@@ -155,9 +155,9 @@ Uses default settings:
 
 ```bash
 # Run comprehensive comparison
-./compare_optimal.pl alt_mytrack.txt
-gnuplot compare_optimal.gnuplot
-# View comparison_optimal.png
+./compare_harmonic mean.pl alt_mytrack.txt
+gnuplot compare_harmonic mean.gnuplot
+# View comparison_harmonic mean.png
 ```
 
 ### Method Characteristics
@@ -168,7 +168,7 @@ gnuplot compare_optimal.gnuplot
 | **Monotone (m=1)** | ⭐⭐⭐ | ✅ None | Guaranteed accuracy |
 | **Catmull-Rom (m=2)** | ⭐⭐⭐⭐ | ⚠️ Some | Fine-tuning needed |
 | **Limited (m=3)** | ⭐⭐⭐ | ⚠️ Minimal | Simple constraint |
-| **OPTIMAL** | ⭐⭐⭐⭐⭐ | ✅ None | **Best of both worlds** ⭐ |
+| **Harmonic Mean** | ⭐⭐⭐⭐⭐ | ✅ None | **Best of both worlds** ⭐ |
 
 ## Technical Details
 
@@ -189,7 +189,7 @@ Constraints:
 The key innovation is in calculating S₀ and S_L using:
 1. Weighted harmonic mean for base slope
 2. Adaptive constraint based on alpha
-3. C² continuity blending
+3. Smoothing factor blending
 4. Extrema detection and handling
 
 ### Why Harmonic Mean?
@@ -203,17 +203,17 @@ For positive a, b:
 
 This prevents overly steep slopes that cause overshoot.
 
-### C² Continuity
+### C¹ Continuity
 
-C² continuity means the second derivative is continuous:
+C¹ continuity means the first derivative (slope) is continuous:
 
 ```
 C⁰: Function is continuous (no gaps)
 C¹: First derivative is continuous (no sharp corners)
-C²: Second derivative is continuous (no visible "kinks")
+C²: Second derivative is continuous (smooth curvature)
 ```
 
-The algorithm achieves C² continuity through the blending step, creating visually smoother curves.
+The algorithm achieves C¹ continuity by matching slopes at section boundaries (S₀ of section N+1 = S_L of section N), creating smooth curves without visible kinks.
 
 ## Performance Characteristics
 
@@ -235,34 +235,34 @@ Minimal - same as original algorithm
 
 ### Flat with Small Bumps
 ```bash
-./4p_optimal -s 10.0 -a 0.9 input.txt
+./4p_harmonic mean -s 10.0 -a 0.9 input.txt
 ```
 High smoothness, strong overshoot prevention to avoid exaggerating bumps.
 
 ### Varied/Hilly Terrain
 ```bash
-./4p_optimal -s 8.0 -a 0.85 input.txt  # Default
+./4p_harmonic mean -s 8.0 -a 0.85 input.txt  # Default
 ```
 Balanced approach works best.
 
 ### Smooth Gradual Changes
 ```bash
-./4p_optimal -s 12.0 -a 0.7 input.txt
+./4p_harmonic mean -s 12.0 -a 0.7 input.txt
 ```
 Can afford more smoothness with less constraint.
 
 ### Sharp Peaks/Valleys
 ```bash
-./4p_optimal -s 6.0 -a 0.9 input.txt
+./4p_harmonic mean -s 6.0 -a 0.9 input.txt
 ```
 Moderate smoothness, strong overshoot prevention.
 
 ### Experimental/Fine-Tuning
 ```bash
 # Try different combinations
-./4p_optimal -s 8.0 -a 0.8 input.txt
-./4p_optimal -s 10.0 -a 0.85 input.txt
-./4p_optimal -s 12.0 -a 0.9 input.txt
+./4p_harmonic mean -s 8.0 -a 0.8 input.txt
+./4p_harmonic mean -s 10.0 -a 0.85 input.txt
+./4p_harmonic mean -s 12.0 -a 0.9 input.txt
 ```
 
 ## Troubleshooting
@@ -271,28 +271,28 @@ Moderate smoothness, strong overshoot prevention.
 
 Increase smoothing factor:
 ```bash
-./4p_optimal -s 12.0 input.txt
+./4p_harmonic mean -s 12.0 input.txt
 ```
 
 ### Minor Overshoot Visible
 
 Increase alpha:
 ```bash
-./4p_optimal -a 0.95 input.txt
+./4p_harmonic mean -a 0.95 input.txt
 ```
 
 ### Curves Too Flat at Peaks
 
 Decrease alpha slightly:
 ```bash
-./4p_optimal -a 0.75 input.txt
+./4p_harmonic mean -a 0.75 input.txt
 ```
 
 ### Want Maximum Smoothness
 
 Decrease alpha and increase smoothing:
 ```bash
-./4p_optimal -s 15.0 -a 0.6 input.txt
+./4p_harmonic mean -s 15.0 -a 0.6 input.txt
 ```
 
 ## Output Files
@@ -314,12 +314,12 @@ Same as other methods:
 
 ```bash
 # Visual inspection
-./4p_optimal alt_mytrack.txt
+./4p_harmonic mean alt_mytrack.txt
 gnuplot __do_plot_all.txt
 
 # Compare with other methods
-./compare_optimal.pl alt_mytrack.txt
-gnuplot compare_optimal.gnuplot
+./compare_harmonic mean.pl alt_mytrack.txt
+gnuplot compare_harmonic mean.gnuplot
 ```
 
 ## Theory: Why This Works
@@ -332,23 +332,23 @@ Overshoot occurs when cubic splines have slopes that are too steep relative to t
 
 Strict monotone constraints (like Fritsch-Carlson) prevent overshoot but can create visible discontinuities in the second derivative, appearing as "kinks."
 
-### The Optimal Solution
+### The Harmonic Mean Solution
 
 By using:
 1. **Harmonic mean** - Conservative slope estimation
 2. **Adaptive constraints** - Gradually tighten based on alpha
-3. **C² blending** - Smooth second derivatives
+3. **Smoothing factor blending** - Smooth transitions
 4. **Extrema handling** - Special care at peaks/valleys
 
 We achieve **maximum smoothness** while **eliminating overshoot**.
 
 ## Comparison with Fritsch-Carlson
 
-| Aspect | Fritsch-Carlson | Optimal Algorithm |
+| Aspect | Fritsch-Carlson | Harmonic Mean |
 |--------|----------------|-------------------|
 | **Overshoot** | None (guaranteed) | None (with alpha ≥ 0.85) |
 | **Smoothness** | Good | Excellent |
-| **C² Continuity** | No | Yes |
+| **C¹ Continuity** | Yes | Yes |
 | **Flexibility** | Fixed | Adjustable (alpha) |
 | **Extrema Handling** | Slope = 0 | Weighted blend |
 | **Slope Calculation** | Harmonic mean | Weighted harmonic mean |
@@ -356,9 +356,9 @@ We achieve **maximum smoothness** while **eliminating overshoot**.
 
 ## Summary
 
-The optimal algorithm represents the **best balance** between smoothness and overshoot prevention:
+The Harmonic Mean algorithm represents an **excellent balance** between smoothness and overshoot prevention:
 
-✅ **Maximum smoothness** through C² continuity and high smoothing factors  
+✅ **Maximum smoothness** through C¹ continuity and high smoothing factors  
 ✅ **No overshoot** through adaptive constraints and harmonic mean  
 ✅ **Flexible** via alpha parameter for different terrain types  
 ✅ **Efficient** with same O(n) complexity as other methods  
@@ -369,21 +369,21 @@ The optimal algorithm represents the **best balance** between smoothness and ove
 
 ```bash
 # Default (recommended for most cases)
-./4p_optimal input.txt
+./4p_harmonic mean input.txt
 
 # Maximum smoothness, minimal overshoot prevention
-./4p_optimal -s 15.0 -a 0.5 input.txt
+./4p_harmonic mean -s 15.0 -a 0.5 input.txt
 
 # Balanced
-./4p_optimal -s 10.0 -a 0.75 input.txt
+./4p_harmonic mean -s 10.0 -a 0.75 input.txt
 
-# Near-optimal (default)
-./4p_optimal -s 8.0 -a 0.85 input.txt
+# Near-harmonic mean (default)
+./4p_harmonic mean -s 8.0 -a 0.85 input.txt
 
 # Guaranteed no overshoot
-./4p_optimal -s 6.0 -a 1.0 input.txt
+./4p_harmonic mean -s 6.0 -a 1.0 input.txt
 
 # Compare all methods
-./compare_optimal.pl input.txt
-gnuplot compare_optimal.gnuplot
+./compare_harmonic mean.pl input.txt
+gnuplot compare_harmonic mean.gnuplot
 ```

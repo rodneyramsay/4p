@@ -1,15 +1,15 @@
-# Project Transcript: OPTIMAL Altitude Smoothing Algorithm
+# Project Transcript: Harmonic Mean Altitude Smoothing Algorithm
 
 **Date:** October 18, 2025  
 **Project:** 4p - Altitude Profile Smoothing for Race Tracks
 
 ## Session Overview
 
-This session focused on developing and implementing an OPTIMAL altitude smoothing algorithm (Method 4) that achieves maximum smoothness while preventing overshoot, with proper handling of closed-loop race tracks.
+This session focused on developing and implementing an Harmonic Mean altitude smoothing algorithm (Method 4) that achieves maximum smoothness while preventing overshoot, with proper handling of closed-loop race tracks.
 
 ## Key Accomplishments
 
-### 1. OPTIMAL Algorithm Development (4p_optimal)
+### 1. Harmonic Mean Algorithm Development (4p_harmonic mean)
 
 **Problem:** Existing methods had trade-offs:
 - Method 0 (Original): Smooth but overshoots
@@ -17,7 +17,7 @@ This session focused on developing and implementing an OPTIMAL altitude smoothin
 - Method 2 (Catmull-Rom): Balanced but configurable
 - Method 3 (Limited): Simple constraint-based
 
-**Solution:** Developed Method 4 (OPTIMAL) with:
+**Solution:** Developed Method 4 (Harmonic Mean) with:
 - C² continuity (smooth second derivatives) throughout the track
 - Adaptive slope constraints based on local curvature
 - Weighted harmonic mean for slope blending
@@ -54,7 +54,7 @@ $alpha = 0.85;  # 0.0 = max smoothness, 1.0 = guaranteed no overshoot
 
 **Created Scripts:**
 
-#### compare_optimal.pl
+#### compare_harmonic mean.pl
 - Runs all 5 smoothing methods on input file
 - Generates comparison gnuplot script
 - Produces overlay visualization of all methods
@@ -83,7 +83,7 @@ $alpha = 0.85;  # 0.0 = max smoothness, 1.0 = guaranteed no overshoot
 # Simple comparison for any dataset
 make alt_LPL.alt
   → Runs all methods
-  → Generates comparison_optimal.png
+  → Generates comparison_harmonic mean.png
 
 # Full analysis for pulse test case
 make alt_mytrack.alt
@@ -110,19 +110,19 @@ make alt_mytrack.alt
 
 ## Technical Details
 
-### Optimal Slope Calculation
+### Harmonic Mean Slope Calculation
 
 The algorithm uses a sophisticated slope computation:
 
 ```perl
-sub optimal_slope {
+sub harmonic mean_slope {
     my ($slope_left, $slope_mid, $slope_right, $is_start, $smooth, $alpha) = @_;
     
     # Weighted harmonic mean for smoothness
     # Adaptive constraints based on local curvature
     # Overshoot prevention using alpha parameter
     
-    return $optimal_slope;
+    return $harmonic mean_slope;
 }
 ```
 
@@ -147,10 +147,10 @@ Where:
 ## Files Modified/Created
 
 ### New Files:
-- `4p_optimal` - OPTIMAL algorithm implementation
-- `compare_optimal.pl` - Method comparison script
+- `4p_harmonic mean` - Harmonic Mean algorithm implementation
+- `compare_harmonic mean.pl` - Method comparison script
 - `generate_plot_scripts.pl` - Detailed plot generation
-- `OPTIMAL_ALGORITHM.md` - Complete documentation
+- `Harmonic Mean_ALGORITHM.md` - Complete documentation
 
 ### Modified Files:
 - `4p_improved` - Updated with all methods
@@ -158,7 +158,7 @@ Where:
 - `README.md` - Updated documentation
 
 ### Generated Files:
-- `comparison_optimal.png` - All methods overlaid
+- `comparison_harmonic mean.png` - All methods overlaid
 - `pulse_sections.png` - Section visualization
 - `zoom_transition.png` - Transition detail
 - `zoom_junction.png` - Junction detail 1
@@ -169,7 +169,7 @@ Where:
 ### alt_mytrack.txt (Pulse Test Case)
 - 3 sections: flat 1m → transition → flat 12m
 - All methods compared successfully
-- OPTIMAL shows smooth transition without overshoot
+- Harmonic Mean shows smooth transition without overshoot
 
 ### alt_LPL.txt (Real Track)
 - 40km track with 185 sections
@@ -184,7 +184,7 @@ Where:
 | 1 - Monotone | Medium | No | No (C¹) | Fritsch-Carlson |
 | 2 - Catmull-Rom | Medium-High | Possible | No | Tension control |
 | 3 - Limited | Medium | No | Yes | Simple constraints |
-| 4 - OPTIMAL ⭐ | High | No | Yes | Best of all worlds |
+| 4 - Harmonic Mean ⭐ | High | No | Yes | Best of all worlds |
 
 ## Command Reference
 
@@ -202,7 +202,7 @@ make clean
 make help
 
 # Run specific method manually
-./4p_optimal -s 8.0 -a 0.85 alt_LPL.txt
+./4p_harmonic mean -s 8.0 -a 0.85 alt_LPL.txt
 ./4p_improved -m 1 alt_LPL.txt  # Method 1
 ./4p_improved -m 2 -t 0.3 alt_LPL.txt  # Method 2 with tension
 ```
@@ -226,7 +226,7 @@ Potential improvements:
 
 ## Conclusion
 
-Successfully implemented a production-ready OPTIMAL altitude smoothing algorithm that:
+Successfully implemented a production-ready Harmonic Mean altitude smoothing algorithm that:
 - ✅ Maximizes smoothness (C² continuity)
 - ✅ Prevents overshoot (adaptive constraints)
 - ✅ Handles closed loops (wraparound continuity)
