@@ -38,19 +38,19 @@ For the split sections to perfectly reconstruct the original function, we need:
 
 From the original function at the split point:
 
-$$Y_0 = f_0(0) = D_0$$
+$$Y_{0,0} = f_0(0) = D_0$$
 
-$$Y_1 = f_0(t) = A_0 t^3 + B_0 t^2 + C_0 t + D_0$$
+$$Y_{0,t} = f_0(t) = A_0 t^3 + B_0 t^2 + C_0 t + D_0$$
 
-$$S_0 = f_0'(0) = C_0$$
+$$S_{0,0} = f_0'(0) = C_0$$
 
-$$S_1 = f_0'(t) = 3A_0 t^2 + 2B_0 t + C_0$$
+$$S_{0,t} = f_0'(t) = 3A_0 t^2 + 2B_0 t + C_0$$
 
 ### Section 1 Coefficients
 
 Using the standard cubic spline formulas with length $L_1 = t$:
 
-$$A_1 = \frac{1}{L_1^3} [L_1(S_0 + S_1) + 2(Y_0 - Y_1)]$$
+$$A_1 = \frac{1}{L_1^3} [L_1(S_{0,0} + S_{0,t}) + 2(Y_{0,0} - Y_{0,t})]$$
 
 $$A_1 = \frac{1}{t^3} [t(C_0 + 3A_0 t^2 + 2B_0 t + C_0) + 2(D_0 - A_0 t^3 - B_0 t^2 - C_0 t - D_0)]$$
 
@@ -60,7 +60,7 @@ $$\boxed{A_1 = A_0}$$
 
 Similarly:
 
-$$B_1 = \frac{1}{L_1^2} [L_1(-2S_0 - S_1) - 3(Y_0 - Y_1)]$$
+$$B_1 = \frac{1}{L_1^2} [L_1(-2S_{0,0} - S_{0,t}) - 3(Y_{0,0} - Y_{0,t})]$$
 
 $$\boxed{B_1 = B_0}$$
 
@@ -80,39 +80,39 @@ Section 2 needs to be expressed in its own local coordinate system starting at 0
 
 At the start of Section 2 (which is position $t$ in the original):
 
-$$Y_{2}(0) = f_0(t) = A_0 t^3 + B_0 t^2 + C_0 t + D_0$$
+$$Y_{2,0} = f_0(t) = A_0 t^3 + B_0 t^2 + C_0 t + D_0$$
 
-$$S_{2}(0) = f_0'(t) = 3A_0 t^2 + 2B_0 t + C_0$$
+$$S_{2,0} = f_0'(t) = 3A_0 t^2 + 2B_0 t + C_0$$
 
 At the end of Section 2 (which is position $L$ in the original):
 
-$$Y_{2}(L) = f_0(L) = A_0 L^3 + B_0 L^2 + C_0 L + D_0$$
+$$Y_{2,L_2} = f_0(L) = A_0 L^3 + B_0 L^2 + C_0 L + D_0$$
 
-$$S_{2}(L) = f_0'(L) = 3A_0 L^2 + 2B_0 L + C_0$$
+$$S_{2,L_2} = f_0'(L) = 3A_0 L^2 + 2B_0 L + C_0$$
 
 ### Section 2 Coefficients
 
 Using the standard cubic spline formulas with length $L_2 = L - t$:
 
-$$A_2 = \frac{1}{L_2^3} [L_2(S_{2}(0) + S_{2}(L)) + 2(Y_{2}(0) - Y_{2}(L))]$$
+$$A_2 = \frac{1}{L_2^3} [L_2(S_{2,0} + S_{2,L_2}) + 2(Y_{2,0} - Y_{2,L_2})]$$
 
-$$B_2 = \frac{1}{L_2^2} [L_2(-2S_{2}(0) - S_{2}(L)) - 3(Y_{2}(0) - Y_{2}(L))]$$
+$$B_2 = \frac{1}{L_2^2} [L_2(-2S_{2,0} - S_{2,L_2}) - 3(Y_{2,0} - Y_{2,L_2})]$$
 
-$$C_2 = S_{2}(0) = 3A_0 t^2 + 2B_0 t + C_0$$
+$$C_2 = S_{2,0} = 3A_0 t^2 + 2B_0 t + C_0$$
 
-$$D_2 = Y_{2}(0) = A_0 t^3 + B_0 t^2 + C_0 t + D_0$$
+$$D_2 = Y_{2,0} = A_0 t^3 + B_0 t^2 + C_0 t + D_0$$
 
 ### Detailed Calculation
 
 Let $L_2 = L - t$. We need to calculate:
 
-$$A_2 = \frac{1}{L_2^3} [L_2(S_{2}(0) + S_{2}(L)) + 2(Y_{2}(0) - Y_{2}(L))]$$
+$$A_2 = \frac{1}{L_2^3} [L_2(S_{2,0} + S_{2,L_2}) + 2(Y_{2,0} - Y_{2,L_2})]$$
 
 Substituting:
-- $S_{2}(0)  = 3A_0 t^2 + 2B_0 t + C_0$
-- $S_{2}(L) = 3A_0 L^2 + 2B_0 L + C_0$
-- $Y_{2}(0) = A_0 t^3 + B_0 t^2 + C_0 t + D_0$
-- $Y_{2}(L) = A_0 L^3 + B_0 L^2 + C_0 L + D_0$
+- $S_{2,0}  = 3A_0 t^2 + 2B_0 t + C_0$
+- $S_{2,L_2} = 3A_0 L^2 + 2B_0 L + C_0$
+- $Y_{2,0} = A_0 t^3 + B_0 t^2 + C_0 t + D_0$
+- $Y_{2,L_2} = A_0 L^3 + B_0 L^2 + C_0 L + D_0$
 
 $$A_2 = \frac{1}{L_2^3} [L_2(3A_0 t^2 + 2B_0 t + C_0 + 3A_0 L^2 + 2B_0 L + C_0) + 2(A_0 t^3 + B_0 t^2 + C_0 t - A_0 L^3 - B_0 L^2 - C_0 L)]$$
 
@@ -120,7 +120,7 @@ $$A_2 = \frac{1}{L_2^3} [L_2(3A_0(t^2 + L^2) + 2B_0(t + L) + 2C_0) + 2A_0(t^3 - 
 
 Similarly for $B_2$:
 
-$$B_2 = \frac{1}{L_2^2} [L_2(-2S_{2}(0) - S_{2}(L)) - 3(Y_{2}(0) - Y_{2}(L))]$$
+$$B_2 = \frac{1}{L_2^2} [L_2(-2S_{2,0} - S_{2,L_2}) - 3(Y_{2,0} - Y_{2,L_2})]$$
 
 $$B_2 = \frac{1}{L_2^2} [L_2(-2(3A_0 t^2 + 2B_0 t + C_0) - (3A_0 L^2 + 2B_0 L + C_0)) - 3(A_0 t^3 + B_0 t^2 + C_0 t - A_0 L^3 - B_0 L^2 - C_0 L)]$$
 
@@ -130,9 +130,9 @@ $$\boxed{C_2 = 3A_0 t^2 + 2B_0 t + C_0}$$
 
 $$\boxed{D_2 = A_0 t^3 + B_0 t^2 + C_0 t + D_0}$$
 
-$$\boxed{A_2 = \frac{1}{L_2^3} [L_2(S_{2}(0) + S_{2}(L)) + 2(Y_{2}(0) - Y_{2}(L))]}$$
+$$\boxed{A_2 = \frac{1}{L_2^3} [L_2(S_{2,0} + S_{2,L_2}) + 2(Y_{2,0} - Y_{2,L_2})]}$$
 
-$$\boxed{B_2 = \frac{1}{L_2^2} [L_2(-2S_{2}(0) - S_{2}(L)) - 3(Y_{2}(0) - Y_{2}(L))]}$$
+$$\boxed{B_2 = \frac{1}{L_2^2} [L_2(-2S_{2,0} - S_{2,L_2}) - 3(Y_{2,0} - Y_{2,L_2})]}$$
 
 Where the values are substituted from above.
 
@@ -155,8 +155,8 @@ $$\boxed{
 \begin{align}
 C_2 &= 3A_0 t^2 + 2B_0 t + C_0 \\
 D_2 &= A_0 t^3 + B_0 t^2 + C_0 t + D_0 \\
-A_2 &= \frac{1}{L_2^3} [L_2(S_{2}(0) + S_{2}(L)) + 2(Y_{2}(0) - Y_{2}(L))] \\
-B_2 &= \frac{1}{L_2^2} [L_2(-2S_{2}(0) - S_{2}(L)) - 3(Y_{2}(0) - Y_{2}(L))]
+A_2 &= \frac{1}{L_2^3} [L_2(S_{2,0} + S_{2,L_2}) + 2(Y_{2,0} - Y_{2,L_2})] \\
+B_2 &= \frac{1}{L_2^2} [L_2(-2S_{2,0} - S_{2,L_2}) - 3(Y_{2,0} - Y_{2,L_2})]
 \end{align}
 }$$
 
@@ -185,8 +185,8 @@ Expanding and simplifying shows this equals $f_0(L)$ ✓
 
 2. **Section 2** requires recalculating all four coefficients using the standard cubic spline formulas with:
    - New length: $L_2 = L - t$
-   - Start position/slope: $Y_{2}(0), S_{2}(0)$ rom original function at $x = t$
-   - End position/slope: $Y_{2}(L), S_{2}(L)$ from original function at $x = L$
+   - Start position/slope: $Y_{2,0}, S_{2,0}$ from original function at $x = t$
+   - End position/slope: $Y_{2,L_2}, S_{2,L_2}$ from original function at $x = L$
 
 3. The coefficients $C_2$ and $D_2$ have simple closed forms (derivative and value at split point), but $A_2$ and $B_2$ must be computed using the full cubic spline formulas.
 

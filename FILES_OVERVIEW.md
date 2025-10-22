@@ -17,11 +17,6 @@
   - `-t <value>`: Tension (method 2) or alpha (method 4, default 0.85)
   - `-h`: Help
 
-### `4p_1eq`
-- **Type:** Perl script
-- **Purpose:** Legacy single equation variant
-- **Status:** Preserved for compatibility
-
 ---
 
 ## Helper Scripts
@@ -222,8 +217,7 @@
 ```
 4psi/
 ├── Core Program
-│   ├── 4psi                  (main program)
-│   └── 4p_1eq                (legacy variant)
+│   └── 4psi                  (main program)
 │
 ├── Helper Scripts
 │   ├── generate_all_plots.pl
@@ -304,7 +298,6 @@ gnuplot split_section_plot.gnuplot
 
 ### Core Files
 - `4psi` - Main program with 5 smoothing methods
-- `4p_1eq` - Legacy variant (preserved)
 
 ### Helper Scripts
 - `generate_all_plots.pl` - Method comparison
@@ -334,7 +327,7 @@ gnuplot split_section_plot.gnuplot
 → Read `SMOOTHING_METHODS.md`
 
 ### For Complete Overview
-→ Read `IMPROVEMENTS_SUMMARY.md`
+→ Read `SOLUTION_SUMMARY.md`
 
 ### For Command Help
 ```bash
