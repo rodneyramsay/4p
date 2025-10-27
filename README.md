@@ -54,7 +54,7 @@ This visualization shows how different smoothing methods handle a challenging "p
 
 ![Junction Zoom](zoom_junction.png)
 
-Close-up view of section junctions showing how the Harmonic Mean method maintains smooth C¹ continuity (continuous position and slope) at transition points between sections.
+Close-up view of section junctions showing that all methods maintain smooth C¹ continuity (continuous position and slope) at transition points between sections.
 
 ---
 
